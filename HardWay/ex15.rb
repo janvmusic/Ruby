@@ -15,4 +15,12 @@ print prompt
 file_again = STDIN.gets.chomp()
 txt_again = File.open(file_again)
 
+puts "\n"
+puts "==========#{filename}=========="
 puts txt_again.read()
+puts "=======End of #{filename}======"
+puts "\n"
+
+#close the files
+txt.close()
+txt_again.close()
