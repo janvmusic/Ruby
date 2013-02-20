@@ -6,7 +6,7 @@ poem = <<MULTI_LINE_STRING
 with logic so firmly planted
 cannot dicern \n the needs of lovely
 nor comprehend passion from intuition
-and re requires and explanation
+and rerequires an explanation
 \n\t\twhere there is none.
 MULTI_LINE_STRING
 

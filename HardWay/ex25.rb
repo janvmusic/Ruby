@@ -15,11 +15,11 @@ module Ex25
 	end
 
 	def self.print_last_word(words)
-		word = words.pop
+		word = words.pop()
 		puts word
 	end
 
-	def self.sort_sentece(sentece)
+	def self.sort_sentence(sentece)
 		words = break_words(sentence)
 		print_first_word(words)
 		print_last_word(words)		
