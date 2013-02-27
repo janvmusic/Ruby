@@ -1,7 +1,7 @@
 #Create the array for the cities & maps
-prontera = ['Prontera','Geffen','Mt Mjolnir','Alberta']
-alberta = ['Alberta','Prontera','Geffen','Morroc']
-geffen = ['Geffen','Prontera','Alberta','Nifflheim','Glast Heim']
+$prontera = ['Prontera','Geffen','Mt Mjolnir','Alberta']
+$alberta = ['Alberta','Prontera','Geffen','Morroc']
+$geffen = ['Geffen','Prontera','Alberta','Nifflheim','Glast Heim']
 
 def prompt()
 	print "> "
@@ -20,7 +20,7 @@ end
 #Protera city
 def prontera()
 	clear()
-	puts "Welcome to #{prontera[0]}, Capital of Midgard"
+	puts "Welcome to #{$prontera[0]}, Capital of Midgard"
 	puts "What do you want to do?"
 	puts "1) Fight boss"
 	puts "2) Move other city"
@@ -30,8 +30,10 @@ def prontera()
 		puts "Entering dungeon"
 		dead()
 	elsif next_move.to_i() == 2
+		clear()
 		kafra_teleport()
 	else
+		clear()
 		puts "Guards: What was that! He is a buggler! trap him/her!!"
 		puts "The guards confuse you with a buggler, You are dead"
 		dead()
@@ -51,8 +53,10 @@ def geffen()
 		puts "Entering dungeon"
 		dead()
 	elsif next_move.to_i() == 2
+		clear()
 		kafra_teleport()
 	else
+		clear()
 		puts "Guards: What was that! He is a buggler! trap him/her!!"
 		puts "The guards confuse you with a buggler, You are dead"
 		dead()
@@ -71,6 +75,7 @@ def alberta()
 		puts "Entering dungeon"
 		dead()
 	elsif next_move.to_i() == 2
+		clear()
 		kafra_teleport()
 	else
 		puts "Guards: What was that! He is a buggler! trap him/her!!"
@@ -83,21 +88,21 @@ end
 def kafra_teleport()
 	puts "Welcome to Kafra teleport service"	
 	puts "Where do you want to go?"
-	puts "1) #{prontera.first}"
-	puts "2) #{geffen[0]}"
-	puts "3) #{alberta[0]}"
+	puts "1) #{$prontera.first}"
+	puts "2) #{$geffen.first}"
+	puts "3) #{$alberta.first}"
 	prompt; city = gets.chomp
 
 	#Teleport to...
 	while true
 		if city.to_i() == 1
-			puts "Let's move to #{prontera[0]}"
-			# prontera()
+			puts "Let's move to #{$prontera.first}"
+			prontera()
 		elsif city.to_i() == 2
-			puts "Let's move to #{geffen[0]}"
-			# geffen()
+			puts "Let's move to #{$geffen.first}"
+			geffen()
 		elsif city.to_i() == 3
-			puts "Let's move to #{alberta[0]}"
+			puts "Let's move to #{$alberta.first}"
 			alberta()
 		else
 			puts "That's not a city"
