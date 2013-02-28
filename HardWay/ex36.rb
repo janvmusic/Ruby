@@ -2,6 +2,7 @@
 $prontera = ['Prontera','Geffen','Mt Mjolnir','Alberta']
 $alberta = ['Alberta','Prontera','Geffen','Morroc']
 $geffen = ['Geffen','Prontera','Alberta','Nifflheim','Glast Heim']
+$current_city = ""
 
 def prompt()
 	print "> "
@@ -17,17 +18,23 @@ def dead()
 	Process.exit(0)
 end
 
-#Protera city
-def prontera()
+def city(current_city, message)
 	clear()
-	puts "Welcome to #{$prontera[0]}, Capital of Midgard"
+	puts "Welcome to #{current_city}, #{message}"
 	puts "What do you want to do?"
 	puts "1) Fight boss"
 	puts "2) Move other city"
 	prompt; next_move = gets.chomp
+	prontera(next_move)
+end
 
+
+#Protera city
+def prontera(next_move)
+	clear()
 	if next_move.to_i() == 1
-		puts "Entering dungeon"
+		puts "Entering dungeon... Baphomet is ready to fight!"
+		puts "You are not ready to fight with him...dead"
 		dead()
 	elsif next_move.to_i() == 2
 		clear()
@@ -63,6 +70,7 @@ def geffen()
 	end
 end
 
+#Alberta City
 def alberta()
 	clear()
 	puts "Welcome to #{alberta.first}, city of biggest clock in Midgard"
@@ -96,8 +104,9 @@ def kafra_teleport()
 	#Teleport to...
 	while true
 		if city.to_i() == 1
-			puts "Let's move to #{$prontera.first}"
-			prontera()
+			$current_city = $prontera.first
+			puts "Let's move to #{$current_city}"
+			city($current_city, "Capital of Midgard")
 		elsif city.to_i() == 2
 			puts "Let's move to #{$geffen.first}"
 			geffen()
