@@ -1,9 +1,7 @@
 #Create the array for the cities & maps
-$prontera = ['Prontera','Nifflheim']
-$alberta = ['Alberta','Morroc']
-$geffen = ['Geffen','Glast Heim']
-$boss = ['Baphomet','Doppelganger','Drake','Satan Morroc','Lord of Death','Dark Lord']
-$boss_life = [15,11,10,20,12,15]
+$cities = ['Prontera','Alberta','Geffen','Nifflheim','Morroc','Glast Heim']
+$boss = ['Baphomet','Doppelganger','Drake','Lord of Death','Satan Morroc','Dark Lord']
+$boss_life = [15,11,10,12,20,15]
 $boss_atk = [1,1,1,2,2,2]
 $secretKey = false
 
@@ -50,7 +48,7 @@ def secret_stage(current_city)
 end
 
 #Use this when player attacks
-def pHit(boss_life,hit)
+def pAtk(boss_life,hit)
 	critical = rand(1..10)	
 
 	#let's hit the boss
@@ -63,7 +61,7 @@ def pHit(boss_life,hit)
 end
 
 #Use this when boss attacks!
-def bHit(life,hit)
+def bAtk(life,hit)
 	critical = rand(1..10)	
 
 	#let's hit the boss
@@ -77,7 +75,8 @@ end
 
 #get boss name
 def boss_name(current_city)
-	
+	boss_index = $cities.index(current_city)
+	return $boss[boss_index]
 end
 
 #set boss life
@@ -87,7 +86,7 @@ def boss_life(boss_name)
 end
 
 #set boss atk
-def boss_life(boss_name)
+def boss_atk(boss_name)
 	boss_index = $boss.index(boss_name)
 	return $boss_atk[boss_index]
 end
@@ -151,7 +150,8 @@ def boss_fight(current_city,boss_name)
 			clear()
 			puts "Life: #{life}" 
 			puts "Shield: #{shield}" 
-			puts "Boss Life: #{boss_life}" 
+			puts "#{boss_name} Life: #{boss_life}" 
+			clear()
 		else
 			puts "That's not an option"
 			puts "Pay attention!...dead"
@@ -192,23 +192,23 @@ def kafra_teleport()
 	current_city = ""
 	puts "Welcome to Kafra teleport service"	
 	puts "Where do you want to go?"
-	puts "1) #{$prontera.first}"
-	puts "2) #{$geffen.first}"
-	puts "3) #{$alberta.first}"
+	puts "1) #{$cities.first}"
+	puts "2) #{$cities[1]}"
+	puts "3) #{$cities[2]}"
 	prompt; city = gets.chomp
 
 	#Teleport to...
 	while true
 		if city.to_i() == 1
-			current_city = $prontera.first
+			current_city = $cities.first
 			puts "Let's move to #{current_city}"
 			city(current_city, "Capital of Midgard")
 		elsif city.to_i() == 2
-			current_city = $geffen.first
+			current_city = $cities[1]
 			puts "Let's move to #{current_city}"
 			city(current_city,"Capital of Wizards")
 		elsif city.to_i() == 3
-			current_city = $alberta.first
+			current_city = $cities[2]
 			puts "Let's move to #{current_city}"
 			city(current_city,"home of ancient clock")
 		else
