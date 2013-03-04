@@ -1,12 +1,15 @@
-##################################################################################
-#### TODO section:  														  ####
-####  - Enh If there are more cities than monsters, the program will crash    ####
-####  - Enh What about if exists 1000 of cities? the menu will be so complex  ####
-####  - bug Problem with boss/player life                                     ####
-####  - Enh Flee from a boss                                                  ####
-####  - bug criticals / 1 Hit -> KO                                           ####
-####  - bug isNumeric Option                                                  ####
-##################################################################################
+####################################################################################
+#### Author: Jorge A. Nunez V. 													####
+#### Version: 1.0																####
+#### TODO section:  														    ####
+####  - Enh If there are more cities than monsters, the program will crash      ####
+####  - Enh What about if exists 1000 of cities? the menu will be so complex    ####
+####  - Fixed Problem with boss/player life                                     ####
+####  - Fixed Flee from a boss                                                  ####
+####  - Fixed criticals / 1 Hit -> KO                                           ####
+####  - Fixed isNumeric Option                                                  ####
+####  - Fixed Continue to caps 													####
+####################################################################################
 
 #Create the array for the cities & maps
 $cities = ['Prontera','Alberta','Geffen']
@@ -28,6 +31,11 @@ $boss_atkS2 = [2,2,2]
 #add a prompt sign
 def prompt()
 	print "> "
+end
+
+#checks if the option is numeric
+def isNumeric(number) 
+   true if Integer(number) rescue false
 end
 
 #clear the prompt just a bit
@@ -55,13 +63,13 @@ def secret_stage(current_city)
 	puts "Do you want to continue? Yes/No"
 	prompt; next_move = gets.chomp
 
-	if next_move == "Yes"
+	if next_move == "Yes" || next_move == "yes" || next_move == "y"
 		city(current_city,"Capital of Midgard")
-	elsif next_move == "No"
+	elsif next_move == "No" || next_move == "no" || next_move == "n" 
 		puts "Enjoy your party hero"
 		dead()
 	else
-		puts "You drunk, go home"
+		puts "You drunk hero, go home"
 		dead()
 	end	
 end
@@ -81,7 +89,14 @@ end
 
 #Use this when boss attacks!
 def bAtk(life,hit)
-	critical = rand(1..10)	
+	if $secretKey == false
+		critical = rand(1..10)
+	elsif $secretKey == true
+		critical = rand(1..5)
+	else
+		puts "Something happened"
+		dead()
+	end
 
 	#let's hit the boss
 	if critical % 3 == 0
@@ -112,7 +127,6 @@ def boss_life(boss_name)
 		boss_index = $boss.index(boss_name)
 		return $boss_life[boss_index]
 	end
-
 end
 
 #set boss atk
@@ -146,7 +160,7 @@ def boss_fight(current_city,boss_name)
 	#create status
 	
 	life = 10
-	atk = 10
+	atk = 1
 	boss_life = boss_life(boss_name)
 	boss_atk = boss_atk(boss_name)
 	shield = rand(5)
@@ -155,11 +169,12 @@ def boss_fight(current_city,boss_name)
 		puts "1) Attack"
 		puts "2) Guard"
 		puts "3) Status"
+		puts "4) Flee"
 		prompt; next_move = gets.chomp
 
-		if next_move.to_i() == 1			
+		if next_move.to_i() == 1 
 			#check that you are not dead
-			if life <= 0
+			if life < 1
 				clear() 
 				puts "You are not ready for this boss."
 				puts "Train more and try it again later"
@@ -175,10 +190,15 @@ def boss_fight(current_city,boss_name)
 				puts "You are the true hero of #{current_city} city! Hurrah!"
 				$secretKey = !$secretKey
 				secret_stage(current_city)
-			elsif boss_life >= 1
+			elsif boss_life >= 1 && life >= 1
 				puts "#{boss_name} attacks you!"
 				life = bAtk(life,boss_atk)
 				clear()
+			else
+				clear() 
+				puts "You are not ready for this boss."
+				puts "Train more and try it again later"
+				dead()
 			end
 		elsif next_move.to_i() == 2 
 			if shield <= 0
@@ -192,15 +212,28 @@ def boss_fight(current_city,boss_name)
 				puts "Shield: #{shield}"
 				puts "You attempt to attack #{boss_name}"				
 				boss_life = pAtk(boss_life,atk)
+				
+				if boss_life < 0
+					clear()
+					puts "You are the true hero of #{current_city} city! Hurrah!"
+					$secretKey = !$secretKey
+					secret_stage(current_city)
+					clear()
+				end
+
 				clear()
 			end
-
-		elsif next_move.to_i() == 3
+		elsif next_move.to_i() == 3 
 			clear()
 			puts "Life: #{life}" 
 			puts "Shield: #{shield}" 
 			puts "#{boss_name}\'s Life: #{boss_life}" 
 			clear()
+		elsif next_move.to_i() == 4
+			clear()
+			puts "Shame on you..."
+			puts "You run out of the dungeon... like a chicken"
+			city(current_city,getCurrentCityMessage(current_city))
 		else
 			puts "That's not an option"
 			puts "Pay attention!...dead"
@@ -250,13 +283,16 @@ def kafra_teleport()
 	puts "Where do you want to go?"
 
 	i = 1
+
+	#show the list of available cities
 	for city in $cities
 		puts "#{i}) #{city}"
 		i = i + 1
 	end
 	prompt; next_move = gets.chomp
 
-	if next_move.include? "0" or next_move.include? "1"	
+	#Teleport to..
+	if isNumeric(next_move)
 		current_city = $cities[next_move.to_i()-1]
 		message = getCurrentCityMessage(current_city)
 		puts "Let's move to #{current_city}"
@@ -268,8 +304,6 @@ def kafra_teleport()
 		puts "Unfortunately you got stuck between dimensions...dead"
 		dead()
 	end
-
-	#Teleport to..
 end
 
 #Let's play a game
