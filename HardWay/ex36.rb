@@ -1,9 +1,29 @@
+##################################################################################
+#### TODO section:  														  ####
+####  - Enh If there are more cities than monsters, the program will crash    ####
+####  - Enh What about if exists 1000 of cities? the menu will be so complex  ####
+####  - bug Problem with boss/player life                                     ####
+####  - Enh Flee from a boss                                                  ####
+####  - bug criticals / 1 Hit -> KO                                           ####
+####  - bug isNumeric Option                                                  ####
+##################################################################################
+
 #Create the array for the cities & maps
-$cities = ['Prontera','Alberta','Geffen','Nifflheim','Morroc','Glast Heim']
-$boss = ['Baphomet','Doppelganger','Drake','Lord of Death','Satan Morroc','Dark Lord']
-$boss_life = [15,11,10,12,20,15]
-$boss_atk = [1,1,1,2,2,2]
+$cities = ['Prontera','Alberta','Geffen']
+$messages = ['Capital of Midgard','Home of Ancient Clock','Capital of Wizards']
+$boss = ['Baphomet','Drake','Doppelganger']
+$boss_life = [15,11,10]
+$boss_atk = [1,1,1]
+
+#Key to open new stages!
 $secretKey = false
+
+#stage 2
+$citiesS2 = ['Nifflheim','Morroc','Glast Heim']
+$bossS2 = ['Lord of Death','Satan Morroc','Dark Lord']
+$messagesS2 = ['Capital of Midgard','Home of Ancient Clock','Capital of Wizards']
+$boss_lifeS2 = [12,20,15]
+$boss_atkS2 = [2,2,2]
 
 #add a prompt sign
 def prompt()
@@ -25,7 +45,7 @@ end
 #Secret stage
 def secret_stage(current_city)
 	clear()
-	puts "You saved #{current_city} city"
+	puts "Thanks for save us, #{current_city} city will be always in debt with you"
 	
 	if $secretKey == false
 		"Thank you for save #{current_city}, You are a true hero!"
@@ -43,8 +63,7 @@ def secret_stage(current_city)
 	else
 		puts "You drunk, go home"
 		dead()
-	end
-		
+	end	
 end
 
 #Use this when player attacks
@@ -75,20 +94,48 @@ end
 
 #get boss name
 def boss_name(current_city)
-	boss_index = $cities.index(current_city)
-	return $boss[boss_index]
+	if $secretKey == true
+		boss_index = $citiesS2.index(current_city)
+		return $bossS2[boss_index]
+	else
+		boss_index = $cities.index(current_city)
+		return $boss[boss_index]
+	end
 end
 
 #set boss life
 def boss_life(boss_name)
-	boss_index = $boss.index(boss_name)
-	return $boss_life[boss_index]
+	if $secretKey == true
+		boss_index = $bossS2.index(boss_name)
+		return $boss_lifeS2[boss_index]
+	else
+		boss_index = $boss.index(boss_name)
+		return $boss_life[boss_index]
+	end
+
 end
 
 #set boss atk
 def boss_atk(boss_name)
-	boss_index = $boss.index(boss_name)
-	return $boss_atk[boss_index]
+	if $secretKey == true
+		boss_index = $bossS2.index(boss_name)
+		return $boss_atkS2[boss_index]
+	else
+		boss_index = $boss.index(boss_name)
+		return $boss_atk[boss_index]
+	end
+end
+
+#get currenty city message
+def getCurrentCityMessage(current_city)
+	city_index = $cities.index(current_city)
+	return $messages[city_index]
+end
+
+#get city index
+def getCityS2(current_city)
+	city_index = $cities.index(current_city)
+	return $citiesS2[city_index]
 end
 
 #Let's fight with the right boss
@@ -99,13 +146,13 @@ def boss_fight(current_city,boss_name)
 	#create status
 	
 	life = 10
-	atk = 1
+	atk = 10
 	boss_life = boss_life(boss_name)
 	boss_atk = boss_atk(boss_name)
 	shield = rand(5)
 	
 	while true
-		puts "1) Hit"
+		puts "1) Attack"
 		puts "2) Guard"
 		puts "3) Status"
 		prompt; next_move = gets.chomp
@@ -118,7 +165,7 @@ def boss_fight(current_city,boss_name)
 				puts "Train more and try it again later"
 				dead()
 			elsif life >= 1
-				puts "You attempt to hit #{boss_name}"				
+				puts "You attempt to attack #{boss_name}"				
 				boss_life = pAtk(boss_life,atk)
 			end
 
@@ -137,12 +184,14 @@ def boss_fight(current_city,boss_name)
 			if shield <= 0
 				puts "watchout! your shield is broken!"
 				puts "#{boss_name} attacks you!"
-				bHit(life,boss_hit)
+				bAtk(life,boss_atk)
 				clear()
 			elsif shield >= 1
 				shield = shield - 1
 				puts "Your shield protects your from the attack"
 				puts "Shield: #{shield}"
+				puts "You attempt to attack #{boss_name}"				
+				boss_life = pAtk(boss_life,atk)
 				clear()
 			end
 
@@ -150,7 +199,7 @@ def boss_fight(current_city,boss_name)
 			clear()
 			puts "Life: #{life}" 
 			puts "Shield: #{shield}" 
-			puts "#{boss_name} Life: #{boss_life}" 
+			puts "#{boss_name}\'s Life: #{boss_life}" 
 			clear()
 		else
 			puts "That's not an option"
@@ -172,11 +221,14 @@ def city(current_city, message)
 	prompt; next_move = gets.chomp
 	
 	if next_move.to_i() == 1
+		$secretKey = false
 		boss_fight(current_city,boss_name(current_city))
 	elsif next_move.to_i() == 2
 		if $secretKey == true
-			current_city = $prontera[1]
-			boss_fight(current_city,$prontera[1])
+			puts "Oh you're the true hero!..."
+			puts "I'll be glad to help you in this quest!"
+			current_city = getCityS2(current_city)
+			boss_fight(current_city,boss_name(current_city))
 		else
 			puts "You need to be premium user to use this teleport service"
 			city(current_city, message)
@@ -184,6 +236,10 @@ def city(current_city, message)
 	elsif next_move.to_i() == 3
 		clear()
 		kafra_teleport()
+	else
+		clear()
+		puts "Guards confuse you with a murderer!...dead"
+		dead()
 	end
 end
 
@@ -192,32 +248,28 @@ def kafra_teleport()
 	current_city = ""
 	puts "Welcome to Kafra teleport service"	
 	puts "Where do you want to go?"
-	puts "1) #{$cities.first}"
-	puts "2) #{$cities[1]}"
-	puts "3) #{$cities[2]}"
-	prompt; city = gets.chomp
 
-	#Teleport to...
-	while true
-		if city.to_i() == 1
-			current_city = $cities.first
-			puts "Let's move to #{current_city}"
-			city(current_city, "Capital of Midgard")
-		elsif city.to_i() == 2
-			current_city = $cities[1]
-			puts "Let's move to #{current_city}"
-			city(current_city,"Capital of Wizards")
-		elsif city.to_i() == 3
-			current_city = $cities[2]
-			puts "Let's move to #{current_city}"
-			city(current_city,"home of ancient clock")
-		else
-			puts "That's not a city..."
-			puts "Kafra teleports you anyway"
-			puts "Unfortunately you got stuck between dimensions...dead"
-			dead()
-		end
+	i = 1
+	for city in $cities
+		puts "#{i}) #{city}"
+		i = i + 1
 	end
+	prompt; next_move = gets.chomp
+
+	if next_move.include? "0" or next_move.include? "1"	
+		current_city = $cities[next_move.to_i()-1]
+		message = getCurrentCityMessage(current_city)
+		puts "Let's move to #{current_city}"
+		city(current_city, message)
+	else
+		clear()
+		puts "That's not a city..."
+		puts "Kafra teleports you anyway"
+		puts "Unfortunately you got stuck between dimensions...dead"
+		dead()
+	end
+
+	#Teleport to..
 end
 
 #Let's play a game
