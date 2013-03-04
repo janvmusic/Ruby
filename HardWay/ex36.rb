@@ -1,19 +1,22 @@
 ####################################################################################
 #### Author: Jorge A. Nunez V. 													####
-#### Version: 1.0																####
+#### Version: 1.1																####
 #### TODO section:  														    ####
 ####  - Enh If there are more cities than monsters, the program will crash      ####
 ####  - Enh What about if exists 1000 of cities? the menu will be so complex    ####
-####  - Fixed Problem with boss/player life                                     ####
-####  - Fixed Flee from a boss                                                  ####
-####  - Fixed criticals / 1 Hit -> KO                                           ####
-####  - Fixed isNumeric Option                                                  ####
-####  - Fixed Continue to caps 													####
+####  - Enh better Life bars    												####
+####  - Enh traps 			    												####
+####  - Enh More bosses		    												####
+####  - Enh Quest to beat'em all   												####
+#### Fixed section:  														    ####
+####  - Enh Power names															####
+####  - Enh Life bars 															####
 ####################################################################################
 
 #Create the array for the cities & maps
 $cities = ['Prontera','Alberta','Geffen']
 $messages = ['Capital of Midgard','Home of Ancient Clock','Capital of Wizards']
+$maxAtk = ['Death Scythe!','Water Ball!','Tsubame Gaeshi']
 $boss = ['Baphomet','Drake','Doppelganger']
 $boss_life = [15,11,10]
 $boss_atk = [1,1,1]
@@ -23,14 +26,35 @@ $secretKey = false
 
 #stage 2
 $citiesS2 = ['Nifflheim','Morroc','Glast Heim']
-$bossS2 = ['Lord of Death','Satan Morroc','Dark Lord']
 $messagesS2 = ['Capital of Midgard','Home of Ancient Clock','Capital of Wizards']
+$maxAtkS2 = ['Death Space!','Demonic Smack !','Nightmare!']
+$bossS2 = ['Lord of Death','Satan Morroc','Dark Lord']
 $boss_lifeS2 = [12,20,15]
 $boss_atkS2 = [2,2,2]
 
 #add a prompt sign
 def prompt()
 	print "> "
+end
+
+#print the status bars
+def statusBar(life,boss_life,boss_name)
+	#player life bar.. this one is easy
+	player = "Player ["
+	for i in 1..life.to_i()
+		player << "="
+	end
+	player << "] #{life} / 10"
+	puts player
+
+	#boss lifebar
+	boss = "#{boss_name} ["
+	boss_life_total = boss_life(boss_name)
+	for i in 1..boss_life
+		boss << "="
+	end
+	boss << "]  #{boss_life} / #{boss_life_total}"
+	puts boss
 end
 
 #checks if the option is numeric
@@ -88,7 +112,9 @@ def pAtk(boss_life,hit)
 end
 
 #Use this when boss attacks!
-def bAtk(life,hit)
+def bAtk(life,hit,boss_name)
+	atk = getBossPower(boss_name)
+
 	if $secretKey == false
 		critical = rand(1..10)
 	elsif $secretKey == true
@@ -100,10 +126,21 @@ def bAtk(life,hit)
 
 	#let's hit the boss
 	if critical % 3 == 0
-		puts "Boss: Aurora de Apolo!! hit x #{hit * critical}"
+		puts "#{boss_name}: #{atk}!! hit x #{hit * critical}"
 		life = life - (hit * critical)
 	else
 		life = life - hit
+	end
+end
+
+#get boss power!
+def getBossPower(boss_name)
+	if $secretKey == true
+		boss_index = $bossS2.index(boss_name)
+		return $maxAtkS2[boss_index]
+	else
+		boss_index = $boss.index(boss_name)
+		return $maxAtk[boss_index]
 	end
 end
 
@@ -152,6 +189,15 @@ def getCityS2(current_city)
 	return $citiesS2[city_index]
 end
 
+#checks if still alive
+def stillAlive(life)
+	if life > 0
+		return true
+	else
+		return false
+	end
+end
+
 #Let's fight with the right boss
 def boss_fight(current_city,boss_name)
 	clear()
@@ -168,38 +214,38 @@ def boss_fight(current_city,boss_name)
 	while true
 		puts "1) Attack"
 		puts "2) Guard"
-		puts "3) Status"
-		puts "4) Flee"
+		puts "3) Flee"
 		prompt; next_move = gets.chomp
 
-		if next_move.to_i() == 1 
-			#check that you are not dead
-			if life < 1
-				clear() 
-				puts "You are not ready for this boss."
-				puts "Train more and try it again later"
-				dead()
-			elsif life >= 1
-				puts "You attempt to attack #{boss_name}"				
-				boss_life = pAtk(boss_life,atk)
-			end
+		if next_move.to_i() == 1
+			#player attack
+			puts "You attempt to attack #{boss_name}"				
+			boss_life = pAtk(boss_life,atk)
 
-			#win?!?!
-			if boss_life <= 0 
+			if !stillAlive(boss_life)
 				clear()
 				puts "You are the true hero of #{current_city} city! Hurrah!"
 				$secretKey = !$secretKey
 				secret_stage(current_city)
-			elsif boss_life >= 1 && life >= 1
-				puts "#{boss_name} attacks you!"
-				life = bAtk(life,boss_atk)
-				clear()
-			else
+			end
+
+			#boss attack
+			puts "#{boss_name} attacks you!"
+			life = bAtk(life,boss_atk,boss_name)
+			clear()
+
+			#checks that both are alive
+			if !stillAlive(life)
 				clear() 
 				puts "You are not ready for this boss."
 				puts "Train more and try it again later"
 				dead()
 			end
+
+			#print lifebars
+			statusBar(life,boss_life,boss_name)
+			puts ""
+
 		elsif next_move.to_i() == 2 
 			if shield <= 0
 				puts "watchout! your shield is broken!"
@@ -225,14 +271,8 @@ def boss_fight(current_city,boss_name)
 			end
 		elsif next_move.to_i() == 3 
 			clear()
-			puts "Life: #{life}" 
-			puts "Shield: #{shield}" 
-			puts "#{boss_name}\'s Life: #{boss_life}" 
-			clear()
-		elsif next_move.to_i() == 4
-			clear()
 			puts "Shame on you..."
-			puts "You run out of the dungeon... like a chicken"
+			puts "You ran out of the dungeon... like a chicken"
 			city(current_city,getCurrentCityMessage(current_city))
 		else
 			puts "That's not an option"
