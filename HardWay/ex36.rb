@@ -1,6 +1,6 @@
 ####################################################################################
 #### Author: Jorge A. Nunez V. 													####
-#### Version: 1.1																####
+#### Version: 1.2.1																####
 #### TODO section:  														    ####
 ####  - Enh If there are more cities than monsters, the program will crash      ####
 ####  - Enh What about if exists 1000 of cities? the menu will be so complex    ####
@@ -8,14 +8,17 @@
 ####  - Enh traps 			    												####
 ####  - Enh More bosses		    												####
 ####  - Enh Quest to beat'em all   												####
+####  - Enh More attacks for player/boss										####
 #### Fixed section:  														    ####
-####  - Enh Power names															####
-####  - Enh Life bars 															####
+####  - Fixed guard issue when bAtk/pAtk										####
+####  - Fixed Y when secret_stage        										####
+####  - Fixed message for Alberta        										####
+####  - Fixed Added status bar to guard and shield status						####
 ####################################################################################
 
 #Create the array for the cities & maps
 $cities = ['Prontera','Alberta','Geffen']
-$messages = ['Capital of Midgard','Home of Ancient Clock','Capital of Wizards']
+$messages = ['Capital of Midgard','Dock of Midgard','Capital of Wizards']
 $maxAtk = ['Death Scythe!','Water Ball!','Tsubame Gaeshi']
 $boss = ['Baphomet','Drake','Doppelganger']
 $boss_life = [15,11,10]
@@ -38,13 +41,14 @@ def prompt()
 end
 
 #print the status bars
-def statusBar(life,boss_life,boss_name)
+def statusBar(life,boss_life,boss_name,shield)
 	#player life bar.. this one is easy
 	player = "Player ["
 	for i in 1..life.to_i()
 		player << "="
 	end
-	player << "] #{life} / 10"
+	player << "] #{life} / 10 "
+	player << "Shield: #{shield}"
 	puts player
 
 	#boss lifebar
@@ -87,9 +91,10 @@ def secret_stage(current_city)
 	puts "Do you want to continue? Yes/No"
 	prompt; next_move = gets.chomp
 
-	if next_move == "Yes" || next_move == "yes" || next_move == "y"
+	if next_move == "Yes" || next_move == "yes" || next_move == "y" || next_move == "Y"
 		city(current_city,"Capital of Midgard")
-	elsif next_move == "No" || next_move == "no" || next_move == "n" 
+	elsif next_move == "No" || next_move == "no" || next_move == "n" || next_move == "N
+		"
 		puts "Enjoy your party hero"
 		dead()
 	else
@@ -243,15 +248,26 @@ def boss_fight(current_city,boss_name)
 			end
 
 			#print lifebars
-			statusBar(life,boss_life,boss_name)
+			statusBar(life,boss_life,boss_name,shield)
 			puts ""
 
 		elsif next_move.to_i() == 2 
 			if shield <= 0
 				puts "watchout! your shield is broken!"
 				puts "#{boss_name} attacks you!"
-				bAtk(life,boss_atk)
+				bAtk(life,boss_atk,boss_name)
 				clear()
+
+				if !stillAlive(life)
+					clear() 
+					puts "You are not ready for this boss."
+					puts "Train more and try it again later"
+					dead()
+				end
+
+				#print lifebars
+				statusBar(life,boss_life,boss_name,shield)
+				puts ""
 			elsif shield >= 1
 				shield = shield - 1
 				puts "Your shield protects your from the attack"
@@ -259,13 +275,16 @@ def boss_fight(current_city,boss_name)
 				puts "You attempt to attack #{boss_name}"				
 				boss_life = pAtk(boss_life,atk)
 				
-				if boss_life < 0
+				if !stillAlive(boss_life)
 					clear()
 					puts "You are the true hero of #{current_city} city! Hurrah!"
 					$secretKey = !$secretKey
 					secret_stage(current_city)
-					clear()
 				end
+
+				#print lifebars
+				statusBar(life,boss_life,boss_name,shield)
+				puts ""
 
 				clear()
 			end
