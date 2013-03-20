@@ -1,4 +1,5 @@
 class Lexicon 
+	Pair = Struct.new(:token, :word)
 
 	DIRECTION = {
 		:north => "north",
@@ -41,8 +42,22 @@ class Lexicon
 
 	def scan(stuffs)
 		words = stuffs.split()
+
+		for word in words
+			if DIRECTION.has_value?(word)
+				puts Pair.new(DIRECTION.key(word), word)
+			elsif VERBS.has_value?(word)
+				puts Pair.new(VERBS.key(word), word)
+			elsif STOP_WORDS.has_value?(word)
+				puts Pair.new(STOP_WORDS.key(word), word)
+			elsif NOUNS.has_value?(word)
+				puts Pair.new(NOUNS.key(word), word)
+			else
+				puts "Error!"
+			end
+		end
 	end
 end
 
 lexi = Lexicon.new
-lexi.scan("bear mazapan tonto")
+lexi.scan("go north")
