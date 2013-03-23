@@ -40,24 +40,37 @@ class Lexicon
 		
 	end
 
+	def convert_number(s)
+		begin
+			Integer(s)
+		rescue ArgumentError
+			nil
+		end
+	end
+
 	def scan(stuffs)
 		words = stuffs.split()
-
+		result = []
 		for word in words
 			if DIRECTION.has_value?(word)
-				puts Pair.new(DIRECTION.key(word), word)
+				key = DIRECTION.key(word)
+				result << Pair.new(:direction, DIRECTION[key])
 			elsif VERBS.has_value?(word)
-				puts Pair.new(VERBS.key(word), word)
+				key = VERBS.key(word)
+				result << Pair.new(:verb,VERBS[key])
 			elsif STOP_WORDS.has_value?(word)
-				puts Pair.new(STOP_WORDS.key(word), word)
+				key = STOP_WORDS.key(word)
+				result << Pair.new(:stop,STOP_WORDS[key])
 			elsif NOUNS.has_value?(word)
-				puts Pair.new(NOUNS.key(word), word)
+				key = NOUNS.key(word)
+				result << Pair.new(:noun,NOUNS[key])
+			elsif convert_number(word)
+				result << Pair.new(:number,word)
 			else
-				puts "Error!"
+				result << Pair.new(:error,word)
 			end
 		end
+		return result
 	end
 end
 
-lexi = Lexicon.new
-lexi.scan("go north")
