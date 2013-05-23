@@ -26,6 +26,13 @@ post '/game' do
     # There is a bug here, can you fix it?
     if session[:room]
         session[:room] = session[:room].go(params[:action])
+        
+        #check for the death message
+        if session[:room] == nil
+            session[:room] = DEATH
+        elsif session[:room].get_name() == 'death'
+            session[:room].set_message(params[:action])
+        end
     end
     redirect("/game")
 end
