@@ -23,6 +23,15 @@ class Room
 	def get_name()
 		@name
 	end
+
+	def get_hint()
+		first,second,third,fourth = @@secret_code.to_s.split('')
+		hint = first << "X" << "X" << fourth
+	end
+
+	def clean_message()
+		@message = ""
+	end
 end
 
 # Rooms!
@@ -61,11 +70,11 @@ laser_weapon_armory = Room.new("Laser Weapon Armory",
 	its container.  
 
 	There's a keypad lock on the box and you need the code
-	to get the bomb out.  If you get the code wrong 10 times
+	to get the bomb out.  If you get the code wrong
 	then the lock closes forever and you can't
 	get the bomb.  
 
-	HINT: The code is 4 digits.
+	The code is 4 digits.
 	}
 )
 
@@ -157,10 +166,19 @@ throw_bomb = %q{
 	it goes off.
 }
 
+hint = %q{
+	Lucky you! the first and last digit of the codes are already 
+	in the display!
+}
+
 @@MESSAGES = {
 	'shoot' => shoot,
-	'dodge' => dodge
+	'dodge' => dodge,
+	'throw_bomb' => throw_bomb,
+	'hint' => hint
 }
+
+@@secret_code = "%s%s%s%s" % [rand(9)+1,rand(9)+1,rand(9)+1,rand(9)+1]
 
 # Paths!
 central_corridor.add_paths({
@@ -171,8 +189,10 @@ central_corridor.add_paths({
 	'*' => generic_death
 })
 
+
+puts "secret_code #{@@secret_code}"
 laser_weapon_armory.add_paths({
-	'0132' => the_bridge,
+	@@secret_code => the_bridge,
 	'*' => generic_death,
 })
 

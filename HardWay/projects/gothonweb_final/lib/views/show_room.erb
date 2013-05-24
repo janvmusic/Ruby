@@ -4,23 +4,32 @@
     <%= room.description %>
 </pre>
 
-<% if room.name == 'death' %>    
+<% if room.name == 'death' || room.name == 'The End' %>    
+    
     <p> 
         <pre> <%= room.message %> </pre>
         <a href="/"> Play again?</a>
     </p>
-<% elsif room.name == 'Laser Weapon Armory' %>
-    <% $count = 0 %>
-    <% while $count < 10 do %>
-        <%= $count %>
-        <% $count = $count + 1 %>
-    <% end %>
-    
+
 <% else %>
-    <p>
+    
+    <% if room.name == 'Laser Weapon Armory' %>
+        
+        <pre> <%= room.message %> 
+        Hint: <%= room.get_hint() %> </pre>
         <form action "/game" method="POST">
-            - <input type="text" name="action">
+            [keypad]> <input type="text" name="action">
             <input type="SUBMIT">
         </form>
-    </p>
+    
+    <% else %>
+    
+        <p>
+            <form action "/game" method="POST">
+                What are you gonna do? - <input type="text" name="action">
+                <input type="SUBMIT">
+            </form>
+        </p>
+    
+    <% end %>
 <% end %>

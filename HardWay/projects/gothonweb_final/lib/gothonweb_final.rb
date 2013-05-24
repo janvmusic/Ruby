@@ -32,6 +32,8 @@ post '/game' do
             session[:room] = DEATH
         elsif session[:room].get_name() == 'death'
             session[:room].set_message(params[:action])
+        elsif session[:room].get_name() == 'Laser Weapon Armory'
+            session[:room].set_message('hint')
         end
     end
     redirect("/game")
