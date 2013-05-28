@@ -9,6 +9,7 @@ class Room
 	end
 
 	def go(direction)
+		@@previous_room = @name
 		@paths[direction]
 	end
 
@@ -17,7 +18,21 @@ class Room
 	end
 
 	def set_message(action)
-		@message = @@MESSAGES[action]
+		wrong_code_action = 'wrong_code'
+		puts "MAZAPAN Im in room: #{@name}"
+		puts "And my action is: #{action}"
+
+		if @name == 'death' && action.to_i != 0
+			if @@previous_room == 'Laser Weapon Armory' && action.to_i != @@secret_code
+				@message = @@MESSAGES['wrong_code']
+			elsif @@previous_room == 'Escape Pod' && action.to_i != 2
+				@message = @@MESSAGES['wrong_pod']
+			else
+				@message = @@MESSAGES['generic']
+			end
+		else
+			@message = @@MESSAGES[action]
+		end
 	end
 
 	def get_name()
@@ -171,14 +186,35 @@ hint = %q{
 	in the display!
 }
 
+wrong_code = %q{
+	The lock buzzes one last time and then you hear a sickening
+	melting sound as the mechanism is fused together.
+	You decide to sit there, and finally the Gothons blow up the
+	ship from their ship and you die.
+}
+
+wrong_pod = %q{
+	You jump into pod and hit the eject button.
+	The pod escapes out into the void of space, then
+	implodes as the hull ruptures, crushing your body
+	into jam jelly.
+}
+
+generic = %q{
+	Ooops!
+}
+
 @@MESSAGES = {
 	'shoot' => shoot,
 	'dodge' => dodge,
-	'throw_bomb' => throw_bomb,
-	'hint' => hint
+	'throw the bomb' => throw_bomb,
+	'hint' => hint,
+	'wrong_code' => wrong_code,
+	'wrong_pod' => wrong_pod
 }
 
 @@secret_code = "%s%s%s%s" % [rand(9)+1,rand(9)+1,rand(9)+1,rand(9)+1]
+@@previous_room = "" 
 
 # Paths!
 central_corridor.add_paths({

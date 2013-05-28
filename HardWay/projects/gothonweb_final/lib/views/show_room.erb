@@ -8,6 +8,7 @@
     
     <p> 
         <pre> <%= room.message %> </pre>
+        <% room.clean_message() %>
         <a href="/"> Play again?</a>
     </p>
 
@@ -24,12 +25,10 @@
     
     <% else %>
     
-        <p>
-            <form action "/game" method="POST">
-                What are you gonna do? - <input type="text" name="action">
-                <input type="SUBMIT">
-            </form>
-        </p>
+        <p><form action "/game" method="POST">
+            What are you gonna do? - <input type="text" name="action">
+            <input type="SUBMIT">
+        </form></p>
     
     <% end %>
 <% end %>
