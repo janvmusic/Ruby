@@ -6,7 +6,11 @@
 <% if room.name == 'death' || room.name == 'The End' %>     
     <p> 
         <pre> <%= room.message %> </pre>
+<<<<<<< HEAD
         <%= room.cleanMessage() %>
+=======
+        <% room.clean_message() %>
+>>>>>>> f18e3bb78a80bd063fa496889e182b76e580cf48
         <a href="/"> Play again?</a>
     </p>
 
@@ -23,12 +27,10 @@
     
     <% else %>
     
-        <p>
-            <form action "/game" method="POST">
-                What are you gonna do? - <input type="text" name="action">
-                <input type="SUBMIT">
-            </form>
-        </p>
+        <p><form action "/game" method="POST">
+            What are you gonna do? - <input type="text" name="action">
+            <input type="SUBMIT">
+        </form></p>
     
     <% end %>
 <% end %>
