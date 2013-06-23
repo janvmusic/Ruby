@@ -1,41 +1,41 @@
 class Room
-	attr_accessor :name, :description, :paths, :message
+	attr_accessor :name, :description, :paths, :message, :previousRoom
 
 	def initialize(name,description)
 		@name = name
 		@description = description
 		@paths = {}
 		@message = ""
+		@previousRoom = ""
 	end
 
+	# Misc methods
 	def go(direction)
 		@paths[direction]
 	end
 
-	def add_paths(paths)
+	def addPaths(paths)
 		@paths.update(paths)
 	end
 
-	def set_message(action)
+	def cleanMessage()
+		@message = ""
+	end
+
+	# Sets
+	def setMessage(action)
 		@message = @@MESSAGES[action]
 	end
 
-	def get_name()
-		@name
-	end
-
-	def get_hint()
-		first,second,third,fourth = @@secret_code.to_s.split('')
+	# Gets
+	def getHint()
+		first,second,third,fourth = @@secretCode.to_s.split('')
 		hint = first << "X" << "X" << fourth
-	end
-
-	def clean_message()
-		@message = ""
 	end
 end
 
 # Rooms!
-central_corridor = Room.new("Central Corridor",
+centralCorridor = Room.new("Central Corridor",
 	%q{
 	The Gothons of Planet Percal #25 have invaded your ship and destroyed
 	your entire crew.  You are the last surviving member and your last
@@ -50,7 +50,7 @@ central_corridor = Room.new("Central Corridor",
 	}
 )
 
-laser_weapon_armory = Room.new("Laser Weapon Armory",
+laserWeaponArmory = Room.new("Laser Weapon Armory",
 	%q{
 	Lucky for you they made you learn Gothon insults in 
 	the academy. You tell the one Gothon joke you know:
@@ -78,7 +78,7 @@ laser_weapon_armory = Room.new("Laser Weapon Armory",
 	}
 )
 
-the_bridge = Room.new("The Bridge",
+theBridge = Room.new("The Bridge",
 	%q{
 	The container clicks open and the seal breaks, letting gas out.
 	You grab the neutron bomb and run as fast as you can to the
@@ -94,7 +94,7 @@ the_bridge = Room.new("The Bridge",
 	}
 )
 
-escape_pod = Room.new("Escape Pod",
+escapePod = Room.new("Escape Pod",
 	%q{
 	You point your blaster at the bomb under your arm
 	and the Gothons put their hands up and start to sweat.
@@ -116,7 +116,7 @@ escape_pod = Room.new("Escape Pod",
 	}
 )
 
-the_end_winner = Room.new("The End",
+theEndWinner = Room.new("The End",
 	%q{
 	You jump into pod 2 and hit the eject button.
 	The pod easily slides out into space heading to
@@ -127,18 +127,20 @@ the_end_winner = Room.new("The End",
 	}
 )
 
-the_end_loser = Room.new("death",
+theEndLoser = Room.new("Wrong Pod",
 	%q{
 	You jump into a random pod and hit the eject button.
 	The pod escapes out into the void of space, then
 	implodes as the hull ruptures, crushing your body
 	into jam jelly.
+
+	You were too close. Game Over.
 	}
 )
 
-generic_death = Room.new("death","You died")
+genericDeath = Room.new("death","You died")
 
-# messages
+# Messages
 shoot = %q{
 	Quick on the draw you yank out your blaster and fire it at the Gothon.
 	His clown costume is flowing and moving around his body, which throws
@@ -157,7 +159,7 @@ dodge = %q{
 	your head and eats you.
 }
 
-throw_bomb = %q{
+throwBomb = %q{
 	In a panic you throw the bomb at the group of Gothons
 	and make a leap for the door. Right as you drop it a
 	Gothon shoots you right in the back killing you.
@@ -171,43 +173,72 @@ hint = %q{
 	in the display!
 }
 
+wrongCode = 
+%q{
+	The lock buzzes one last time and then you hear the sickening
+	melting sound as the mechanism is fused together.
+	You decide to sit there, and finally the Gothons blow up the
+	ship from their ship and you die.
+}
+
+bridgeDeath = 
+%q{
+	That's something you think is a good idea? Probably not
+	a Gothon found you and shoot you in the back. While you
+	exhale your last breathe you can see how all the ship is 
+	blown, finally you die in the bast space.
+}
+
+wrongPod = 
+%{
+	You jump into pod %s and hit the eject button." % guess
+	The pod escapes out into the void of space, then"
+	implodes as the hull ruptures, crushing your body"
+	into jam jelly."
+}
+
+# Here add messages to the arrays
 @@MESSAGES = {
 	'shoot' => shoot,
 	'dodge' => dodge,
-	'throw_bomb' => throw_bomb,
-	'hint' => hint
+	'throw_bomb' => throwBomb,
+	'hint' => hint,
+	'wrongCode' => wrongCode,
+	'bridgeDeath' => bridgeDeath,
+	'wrongPod' => wrongPod
 }
 
-@@secret_code = "%s%s%s%s" % [rand(9)+1,rand(9)+1,rand(9)+1,rand(9)+1]
+# Let's generate the secret code
+@@secretCode = "%s%s%s%s" % [rand(9)+1,rand(9)+1,rand(9)+1,rand(9)+1]
 
 # Paths!
-central_corridor.add_paths({
-	'tell a joke' => laser_weapon_armory,
-	'joke' => laser_weapon_armory,
-	'shoot' => generic_death,
-	'dodge' => generic_death,
-	'*' => generic_death
+centralCorridor.addPaths({
+	'tell a joke' => laserWeaponArmory,
+	'joke' => laserWeaponArmory,
+	'shoot' => genericDeath,
+	'dodge' => genericDeath,
+	'*' => genericDeath
 })
 
-
-puts "secret_code #{@@secret_code}"
-laser_weapon_armory.add_paths({
-	@@secret_code => the_bridge,
-	'*' => generic_death,
+# Hint the user!
+puts "secret_code #{@@secretCode}"
+laserWeaponArmory.addPaths({
+	@@secretCode => theBridge,
+	'*' => genericDeath,
 })
 
-the_bridge.add_paths({
-	'throw the bomb' => generic_death,
-	'slowly place the bomb' => escape_pod,
-	'*' => generic_death
+theBridge.addPaths({
+	'throw the bomb' => genericDeath,
+	'slowly place the bomb' => escapePod,
+	'*' => genericDeath
 })
 
-escape_pod.add_paths({
-	'2' => the_end_winner,
-	'*' => the_end_loser
+escapePod.addPaths({
+	'2' => theEndWinner,
+	'*' => theEndLoser
 })
 
-START = central_corridor
-DEATH = generic_death
+START = centralCorridor
+DEATH = genericDeath
 
 

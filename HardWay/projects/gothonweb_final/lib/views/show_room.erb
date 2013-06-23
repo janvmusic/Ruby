@@ -1,13 +1,12 @@
 <h1><%= room.name %></h1>
-
 <pre>
     <%= room.description %>
 </pre>
 
-<% if room.name == 'death' || room.name == 'The End' %>    
-    
+<% if room.name == 'death' || room.name == 'The End' %>     
     <p> 
         <pre> <%= room.message %> </pre>
+        <%= room.cleanMessage() %>
         <a href="/"> Play again?</a>
     </p>
 
@@ -16,7 +15,7 @@
     <% if room.name == 'Laser Weapon Armory' %>
         
         <pre> <%= room.message %> 
-        Hint: <%= room.get_hint() %> </pre>
+        Hint: <%= room.getHint() %> </pre>
         <form action "/game" method="POST">
             [keypad]> <input type="text" name="action">
             <input type="SUBMIT">
