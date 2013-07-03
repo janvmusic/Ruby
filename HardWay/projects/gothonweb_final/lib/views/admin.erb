@@ -3,9 +3,23 @@
         <div class="panel" id="home">
             <h2>Welcome to NunezCo Game Center</h2>   
                 <div class="col_400 float_l">
-                    <p><em>You need to login!</em></p>       
-                        <p> To access the game area, you need to login.
-                            Please follow this <a href="/admin">link</a>
+                    <p><em>Login</em></p>       
+                        <form action="/login" method ="post" accept-charset="utf-8">
+                            <table>
+                                <tr>
+                                    <td>Username: </td>
+                                    <td><input type="text" name="username"></td>
+                                </tr>
+                                <tr>
+                                    <td>Password: </td>
+                                    <td><input type="password" name="password"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><input type="submit" value="submit"></td>
+                                </tr>
+                            </table>
+                        </form>
                 </div>
                 <div class="col_280 float_r">   
                     <h3>Our Services</h3>

@@ -1,34 +1,48 @@
-<h1><%= room.name %></h1>
-<pre>
-    <%= room.description %>
-</pre>
 
-<% if room.name == 'death' || room.name == 'The End' %>     
-    <p> 
-        <pre> <%= room.message %> </pre>
-        <%= room.cleanMessage() %>
-        <a href="/"> Play again?</a>
-    </p>
+<div class="scroll">
+    <div class="scrollContainer">
+        <div class="panel" id="home">
+            <h2><%= room.name %></h2>   
+                <div class="col_400 float_l">
+                    <p><em><%= room.description %></em></p>       
+                    <p>
+                        <% if room.name == 'death' || room.name == 'The End' %>     
+                            <p> 
+                                <em> <%= room.message %> </em>
+                                <%= room.cleanMessage() %>
+                                </br></br>
+                                <a href="/"> Play again?</a>
+                            </p>
 
-<% else %>
+                        <% else %>
+                            <% if room.name == 'Laser Weapon Armory' %>
+                                <em> <%= room.message %> </em>
+                                <em>Hint: <%= room.getHint() %> </em>
+                                <form action "/game" method="POST">
+                                    [keypad]> <input type="text" name="action">
+                                    <input type="SUBMIT">
+                                </form>
+                            <% else %>
+                                <p>
+                                    <form action "/game" method="POST">
+                                        What are you gonna do? - <input type="text" name="action">
+                                        <input type="SUBMIT">
+                                    </form>
+                                </p>    
     
-    <% if room.name == 'Laser Weapon Armory' %>
-        
-        <pre> <%= room.message %> 
-        Hint: <%= room.getHint() %> </pre>
-        <form action "/game" method="POST">
-            [keypad]> <input type="text" name="action">
-            <input type="SUBMIT">
-        </form>
-    
-    <% else %>
-    
-        <p>
-            <form action "/game" method="POST">
-                What are you gonna do? - <input type="text" name="action">
-                <input type="SUBMIT">
-            </form>
-        </p>
-    
-    <% end %>
-<% end %>
+                            <% end %>
+                        <% end %>
+                    </p>
+                </div>
+                <div class="col_280 float_r">   
+                    <h3>Our Services</h3>
+                        
+                    <ul class="service_list">
+                            <li><a href="#" class="service_one">I won't</a></li>
+                            <li><a href="#" class="service_two">Work until</a></li>
+                            <li><a href="#" class="service_three">You Decide to</a></li>
+                            <li><a href="#" class="service_four">Add some</a></li> 
+                            <li><a href="#" class="service_five">Help Here</a></li>   
+                    </ul>
+                </div>                
+            </div><!-- end of home -->
