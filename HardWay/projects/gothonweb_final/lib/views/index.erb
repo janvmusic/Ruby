@@ -1,23 +1,21 @@
 <div class="scroll">
     <div class="scrollContainer">
         <div class="panel" id="home">
-            <h2>Welcome to NunezCo Game Center</h2>   
+            <h2>
+                <% if admin? %>
+                    <%= "Welcome #{settings.username} to NunezCo Game Center " %>
+                <% else %>
+                    <%= "Welcome to NunezCo Game Center" %>
+                <% end %>
+            </h2>   
                 <div class="col_400 float_l">
-                    <p><em>Choose a map</em></p>       
-                        <ul>
-                            <li><a href="/game">Map 1</a></li>
-                            <li><a href="#">Map 2</a></li>
-                        </ul>
-                </div>
-                <div class="col_280 float_r">   
-                    <h3>Our Services</h3>
-                        
-                    <ul class="service_list">
-                            <li><a href="#" class="service_one">I won't</a></li>
-                            <li><a href="#" class="service_two">Work until</a></li>
-                            <li><a href="#" class="service_three">You Decide to</a></li>
-                            <li><a href="#" class="service_four">Add some</a></li> 
-                            <li><a href="#" class="service_five">Help Here</a></li>   
+                    <p><em>Choose a map</em></p>  
+                    <p align="justify">  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta sed nisi id rutrum. Fusce at elit sit amet justo volutpat accumsan in vel quam. Vivamus sit amet lacinia ante, quis facilisis sem. Duis lacus purus, bibendum nec condimentum id, egestas vitae nisl. Sed malesuada convallis venenatis. Pellentesque non mauris facilisis eros gravida pharetra. Phasellus sollicitudin metus vitae tincidunt interdum. Nam venenatis velit sed odio malesuada, sollicitudin feugiat nulla pellentesque. Nulla rhoncus nisi et est rhoncus, eu pellentesque nisl congue. </p>    
+                    
+                    <p><em>Available Maps</em></p>  
+                    <ul> 
+                        <li><a href="/game">Gothons From Planet Percal #25</a></li>
+                        <li><a href="#">Social Zombies</a></li>
+                        <li><a href="#">Politics Rage</a></li>
                     </ul>
-                </div>                
-            </div><!-- end of home -->
+                </div>

@@ -138,7 +138,7 @@ theEndLoser = Room.new("Wrong Pod",
 	}
 )
 
-genericDeath = Room.new("death","You died")
+genericDeath = Room.new("Game Over","You died")
 
 # Messages
 shoot = %q{
@@ -191,10 +191,19 @@ bridgeDeath =
 
 wrongPod = 
 %{
-	You jump into pod %s and hit the eject button." % guess
-	The pod escapes out into the void of space, then"
-	implodes as the hull ruptures, crushing your body"
-	into jam jelly."
+	You jump into pod %s and hit the eject button.
+	The pod escapes out into the void of space, then
+	implodes as the hull ruptures, crushing your body
+	into jam jelly.
+}
+
+gameOver = 
+%q{
+	What was that? Probably that's wasn't a good idea, I mean you made that Gothon
+	furious, be careful, He has a shotgun! *shoots sound* 
+
+	The weapon that he used made you tiny, so now you are in a lab
+	locked in a jar. Probably that's worse than be dead.
 }
 
 # Here add messages to the arrays
@@ -205,7 +214,8 @@ wrongPod =
 	'hint' => hint,
 	'wrongCode' => wrongCode,
 	'bridgeDeath' => bridgeDeath,
-	'wrongPod' => wrongPod
+	'wrongPod' => wrongPod,
+	'gameOver' => gameOver
 }
 
 # Let's generate the secret code
