@@ -4,6 +4,13 @@
             <h2>Welcome to NunezCo Game Center</h2>   
                 <div class="col_400 float_l">
                     <p><em>Login</em></p>       
+
+                        <% if settings.error == true %>
+                            <p><em> <%= " #{settings.errorMessage} " %></em></p>
+                            <% settings.error = false %>
+                            <% settings.errorMessage = "" %>
+                        <%end %>
+
                         <form action="/login" method ="post" accept-charset="utf-8">
                             <table>
                                 <tr>

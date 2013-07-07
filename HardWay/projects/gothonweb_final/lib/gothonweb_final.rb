@@ -1,15 +1,18 @@
 require_relative "gothonweb_final/version"
 require_relative "controller/map"
+require_relative "models/user"
 require "sinatra"
+require 'sinatra/flash'
 require "erb"
 require "rubygems"
-require_relative "models/user"
 use Rack::Session::Pool
 
 # ADDED 
 set :username, ''
 set :token, 'shakenN0tstirr3d'
 set :password, ''
+set :error, false
+set :errorMessage, ''
 
 # TO-DO: Dude you have to put comments on these lines
 helpers do 
@@ -18,7 +21,8 @@ helpers do
     end
 
     def protected!
-        halt [ 401, 'Not Authorized' ] unless admin?
+        # halt [ 401, 'Not Authorized' ] unless admin?
+        redirect("/privateError") unless admin?
     end
 end
 # ADDED 
@@ -65,9 +69,7 @@ post '/game' do
         # Ok the room is not nil right? but well the room is Game Over! D:!
         elsif session[:room].name == 'Game Over'
             # Got the corresponding message!
-            puts "MAZAPAN did I get here?"
             session[:room].setMessage(params[:action])
-
         
         # Room not nil and well it has a name! laser! bzzzz
         elsif session[:room].name == 'Laser Weapon Armory'
@@ -89,23 +91,29 @@ post '/login' do
     password = params['password']
 
     if username == nil || password == nil
-        "Username/Password required"
+        settings.error = true
+        settings.errorMessage = "Incorrect Username/Password"
+        redirect("/admin")
     else
         @user = User.first(username)
     end
 
     if @user == nil
-        "Username or Password incorrect"
+        settings.error = true
+        settings.errorMessage = "Incorrect Username/Password"
+        redirect("/admin")
     elsif @user.username == params['username'] && @user.password == params['password']
-        puts @user.username
-
         response.set_cookie(@user.username, settings.token)
         settings.username = @user.username
+        settings.error = false
+        settings.errorMessage = ""
         p START
         session[:room] = START
         redirect("/")
     else 
-        "Username or Password incorrect"
+        settings.error = true
+        settings.errorMessage = "Incorrect Username/Password"
+        redirect("/admin")
     end
 end
 
@@ -131,5 +139,9 @@ get '/private' do
     protected!
     # 'For your eyes only!'
     erb :private
+end
+
+get '/privateError' do
+    erb :privateError
 end
 # ADDED
