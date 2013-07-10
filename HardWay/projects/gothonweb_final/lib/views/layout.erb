@@ -23,16 +23,16 @@
             <div id="menu">
                 <ul class="navigation">
                     <li><a href="/admin" class="selected"><img src="../images/templatemo_aboutus.png" alt="Login" /></a></li>
-                    <li><a href="/logout"><img src="../images/templatemo_services.png" alt="Logout" /></a></li>
-                    <li><a href="/public"><img src="../images/templatemo_gallery.png" alt="Public" /></a></li>
-                    <li><a href="/private"><img src="../images/templatemo_contactus.png" alt="Private" /></a></li>
+                    <li><a href="/register"><img src="images/templatemo_services.png" alt="Register" /></a></li>
+                    <li><a href="/public"><img src="images/templatemo_gallery.png" alt="Public" /></a></li>
+                    <li><a href="/private"><img src="images/templatemo_contactus.png" alt="Private" /></a></li>
                 </ul>
             </div>
         </div> <!-- end of sidebar --> 
     
         <div id="content">
           <div id="header">
-                <h1><a href="http://localhost:4567">NunezCo</a></h1>
+                <h1><a href="/">NunezCo</a></h1>
                 <div id="social_box">
                     <a href="http://www.facebook.com/jorge.nunez"><img src="images/facebook.png" alt="facebook" /></a>
                     <a href="http://www.twitter.com/janvmusic"><img src="images/twitter.png" alt="twitter" /></a>
@@ -43,14 +43,21 @@
             <%= yield %>
                 <div class="col_280 float_r">   
                     <h3>Menu</h3>
-                        
+                <% if admin? %>
                     <ul class="service_list">
-                            <li><a href="#" class="service_one">Register</a></li>
-                            <li><a href="#" class="service_four">Setings</a></li> 
-                            <li><a href="#" class="service_two">Events</a></li>
-                            <li><a href="#" class="service_three">FAQ</a></li>
-                            <li><a href="#" class="service_five">Contact</a></li> 
+                        <li><a href="/profile" class="service_one">Profile</a></li>
+                        <li><a href="/logout" class="service_four">Logout</a></li> 
+                        <li><a href="/events" class="service_two">Events</a></li>
+                        <li><a href="/faq" class="service_three">FAQ</a></li>
+                        <li><a href="/contact" class="service_five">Contact</a></li> 
                     </ul>
+                <% else %>
+                    <ul class="service_list">
+                        <li><a href="/events" class="service_two">Events</a></li>
+                        <li><a href="/faq" class="service_three">FAQ</a></li>
+                        <li><a href="/contact" class="service_five">Contact</a></li> 
+                    </ul>
+                <% end %>
                 </div>                
             </div><!-- end of home -->
             </div><!-- end of scroll -->

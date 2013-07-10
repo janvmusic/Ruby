@@ -1,0 +1,45 @@
+<div class="scroll">
+    <div class="scrollContainer">
+        <div class="panel" id="home">
+            <h2><%= "#{settings.username}'s Profile @ NunezCo" %> </h2>
+                <div class="col_400 float_l">
+                        <% if settings.error == true %>
+                            <p><em> <%= " #{settings.errorMessage} " %></em></p>
+                            <% settings.error = false %>
+                            <% settings.errorMessage = "" %>
+                        <%end %>
+                    
+                        <table> 
+                            <th colspan="2" align="left"><em>Profile</em></th>
+                            <tr>
+                                <td rowspan="3"><img src="images/profile.jpg" width="100" height="100" alt="Profile"></td>
+                            </tr>
+                            <tr>
+                                <td><em>Username: </em></td>
+                                <td> <%= "#{settings.username} " %></td>
+                            </tr>
+                            <tr>
+                                <td valign="top"><em>Score:  </em></td>
+                                <td valign="top"> 250 </td>
+                            </tr>
+
+                        </table>
+                        <br>
+                    <form action="/profile" method ="post" accept-charset="utf-8">
+                        <table>
+                            <th colspan="3" align="left"><em>Change password</em></th>
+                            <tr>
+                                <td>Username: </td>
+                                <td><input type="text" name="username" value=<%="#{settings.username}"%> readonly></td>
+                            </tr>
+                            <tr>
+                                <td>Password: </td>
+                                <td><input type="password" name="password"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td align="right"><input type="submit" value="Edit"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>

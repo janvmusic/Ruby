@@ -1,0 +1,29 @@
+<div class="scroll">
+    <div class="scrollContainer">
+        <div class="panel" id="home">
+            <h2>Be Part of NunezCo Game Center!</h2>    
+                <div class="col_400 float_l">
+                    <p><em>Register to NunezCo</em></p> 
+                        <% if settings.error == true %>
+                            <p><em> <%= " #{settings.errorMessage} " %></em></p>
+                            <% settings.error = false %>
+                            <% settings.errorMessage = "" %>
+                        <%end %>
+ 
+                    <form action="/register" method ="post" accept-charset="utf-8">
+                        <table>
+                            <tr>
+                                <td>Username: </td>
+                                <td><input type="text" name="username"></td>
+                            </tr>
+                            <tr>
+                                <td>Password: </td>
+                                <td><input type="password" name="password"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="submit" value="Register"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>

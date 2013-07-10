@@ -7,7 +7,6 @@ require "erb"
 require "rubygems"
 use Rack::Session::Pool
 
-# ADDED 
 set :username, ''
 set :token, 'shakenN0tstirr3d'
 set :password, ''
@@ -22,10 +21,13 @@ helpers do
 
     def protected!
         # halt [ 401, 'Not Authorized' ] unless admin?
-        redirect("/privateError") unless admin?
+        redirect("/privateLogin") unless admin?
+    end
+
+    def logout
+        response.set_cookie(settings.username,false)
     end
 end
-# ADDED 
 
 # TO-DO: Dude you have to put comments on these lines
 get '/game' do 
@@ -50,8 +52,7 @@ post '/game' do
 
     if session[:room]
         session[:room] = session[:room].go(params[:action])
-
-        
+      
         # If the room is empty well, lets declare it as a death
         if session[:room] == nil
             session[:room] = DEATH
@@ -95,7 +96,7 @@ post '/login' do
         settings.errorMessage = "Incorrect Username/Password"
         redirect("/admin")
     else
-        @user = User.first(username)
+        @user = User.first(:username=>username)
     end
 
     if @user == nil
@@ -117,6 +118,65 @@ post '/login' do
     end
 end
 
+post '/register' do
+    username = params['username']
+    password = params['password']
+
+    if username == "" || password == ""
+        settings.error = true
+        settings.errorMessage = "Error: All the fields must be filled"
+        redirect("/register")
+    elsif username == nil || password == nil
+        settings.error = true
+        settings.errorMessage = "Error: Username/Password null"
+        redirect("/register")
+    else
+        @user = User.new
+        @user.attributes = {:username => username,:password => password}
+        if @user.save
+            settings.error = true
+            settings.errorMessage = "Success: The username was created!"
+            redirect("/register#new")
+        else 
+            settings.error = true
+            settings.errorMessage = "Error: Username already created or an error ocurred"
+            redirect("/register")
+        end
+    end
+end
+
+post '/profile' do
+    username = params['username']
+    password = params['password']
+
+    if username == "" || password == ""
+        settings.error = true
+        settings.errorMessage = "All the fields must be filled"
+        redirect("/profile")
+    elsif username == nil || password == nil
+        settings.error = true
+        settings.errorMessage = "Error: Null Username/Password"
+        redirect("/profile")
+    else
+        @user = User.first(:username=>username)
+        puts @user.username
+        puts @user.password
+        puts username
+        puts password
+
+        @user.attributes = {:username => username,:password => password}
+        if @user.update
+            settings.error = true
+            settings.errorMessage = "Success: The username was updated!"
+            redirect("/profile#updated")
+        else 
+            settings.error = true
+            settings.errorMessage = "Error: An error ocurred"
+            redirect("/profile")
+        end
+    end
+end
+
 # Simple gets
 get '/' do
     erb :index
@@ -127,7 +187,7 @@ get '/admin' do
 end
 
 get '/logout' do
-    response.set_cookie(settings.username,false)
+    logout
     redirect '/'
 end
 
@@ -137,11 +197,39 @@ end
 
 get '/private' do
     protected!
-    # 'For your eyes only!'
     erb :private
 end
 
-get '/privateError' do
+get '/register' do
+    logout
+    erb :register
+end
+
+get '/register#new' do
+    logout
+    erb :register
+end
+
+get '/profile' do
+    erb :profile
+end
+
+get '/profile#updated' do
+    erb :profile
+end
+
+get '/events' do
+    erb :events
+end
+
+get '/faq' do
+    erb :faq
+end
+
+get '/contact' do
+    erb :contact
+end
+
+get '/privateLogin' do
     erb :privateError
 end
-# ADDED
