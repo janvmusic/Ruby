@@ -13,6 +13,7 @@ class User
     property :id, Serial
     property :username, String, :length => 3..50, :key => true, :unique => true, :required => true
     property :password, BCryptHash, :required => true
+    property :score, Integer, :default => 0 
 
     validates_presence_of :username
     validates_uniqueness_of :username

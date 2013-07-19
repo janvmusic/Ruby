@@ -1,36 +1,48 @@
+# Requires inside the project
 require_relative "gothonweb_final/version"
-require_relative "controller/map"
-require_relative "models/user"
+require_relative "controller/gothons"
+require_relative "controller/politics"
+require_relative "controller/users"
+
+# Libraries requires
 require "sinatra"
 require 'sinatra/flash'
 require "erb"
 require "rubygems"
 use Rack::Session::Pool
 
+# Set the cookies
 set :username, ''
-set :token, 'shakenN0tstirr3d'
-set :password, ''
+set :token, 'AirGear'
 set :error, false
 set :errorMessage, ''
 
-# TO-DO: Dude you have to put comments on these lines
-helpers do 
+# Helpers
+helpers do
+    
+    # Check if the user is logged in 
     def admin? 
-        request.cookies[settings.username] == settings.token
+        if session[:user] == nil
+            return false
+        else 
+            return session[:user].logged
+        end
     end
 
+    # Check if the user can see the page
     def protected!
-        # halt [ 401, 'Not Authorized' ] unless admin?
         redirect("/privateLogin") unless admin?
     end
 
+    # Erase the session
     def logout
-        response.set_cookie(settings.username,false)
+        session[:user] = nil
     end
 end
 
-# TO-DO: Dude you have to put comments on these lines
+# TO-DO: Comments & prepare this thing for more rooms
 get '/game' do 
+
     if session[:room]
         if session[:room].name == 'Game Over' && session[:room].message == ""
             session[:room] = START
@@ -44,80 +56,70 @@ get '/game' do
     end 
 end
 
+# TO-DO: Comments & prepare this thing for more rooms
 post '/game' do
     action = "#{params[:action] || nil}"
 
     # Let's save the previous room name
     previousRoom = session[:room].name
 
-    if session[:room]
+    # If the room is empty well, lets declare it as a death
+    if session[:room] == nil
+            session[:room] = session[:room].go('gameOver')
+    elsif session[:room]
         session[:room] = session[:room].go(params[:action])
-      
-        # If the room is empty well, lets declare it as a death
+
         if session[:room] == nil
             session[:room] = DEATH
+            # Set the previous room
+            session[:room].previousRoom = previousRoom
             session[:room].setMessage('gameOver')
-            
-            # If the last room was Laser and he got the wrong code well you are dead xD
-            if previousRoom == 'Laser Weapon Armory'
-                session[:room].setMessage('wrongCode')
-        
-            # If the last room was the bridge and he did the wrong action
-            elsif previousRoom == 'The Bridge'
-                session[:room].setMessage('bridgeDeath')
-            end
-        
-        # Ok the room is not nil right? but well the room is Game Over! D:!
-        elsif session[:room].name == 'Game Over'
-            # Got the corresponding message!
-            session[:room].setMessage(params[:action])
-        
-        # Room not nil and well it has a name! laser! bzzzz
-        elsif session[:room].name == 'Laser Weapon Armory'
-            session[:room].setMessage('hint')
-        
-        elsif session[:room].name == 'Wrong Pod'
-            session[:room].setMessage('wrongPod')
-        end
+        else
+            session[:room].setMessage(action)
+        end 
     end
 
-    # Set the previous room
-    session[:room].previousRoom = previousRoom
     redirect("/game")
 end
 
-# TO-DO: Dude you have to put comments on these lines
+# Post action when a user tries to log in
 post '/login' do
+
+    # Gather Username & password
     username = params['username']
     password = params['password']
 
+    # If username or password are null return error
     if username == nil || password == nil
         settings.error = true
         settings.errorMessage = "Incorrect Username/Password"
         redirect("/admin")
     else
-        @user = User.first(:username=>username)
+        # In the case that username/password are not null
+        # create a new user.
+        session[:user] = UserController.new
     end
 
-    if @user == nil
+    # Login, we are delegating it to UserController.login
+    # If this method return false, then error, else, true.
+    if !session[:user].login(username,password)
         settings.error = true
         settings.errorMessage = "Incorrect Username/Password"
         redirect("/admin")
-    elsif @user.username == params['username'] && @user.password == params['password']
-        response.set_cookie(@user.username, settings.token)
-        settings.username = @user.username
+    else
+        # Set cookies, first room then redirect to /
+        settings.username = session[:user].username
         settings.error = false
         settings.errorMessage = ""
         p START
         session[:room] = START
-        redirect("/")
-    else 
-        settings.error = true
-        settings.errorMessage = "Incorrect Username/Password"
-        redirect("/admin")
+        redirect("/") 
     end
+
+
 end
 
+# Post action when a user tries to register
 post '/register' do
     username = params['username']
     password = params['password']
@@ -131,9 +133,8 @@ post '/register' do
         settings.errorMessage = "Error: Username/Password null"
         redirect("/register")
     else
-        @user = User.new
-        @user.attributes = {:username => username,:password => password}
-        if @user.save
+        session[:user] = UserController.new
+        if session[:user].register
             settings.error = true
             settings.errorMessage = "Success: The username was created!"
             redirect("/register#new")
@@ -158,16 +159,10 @@ post '/profile' do
         settings.errorMessage = "Error: Null Username/Password"
         redirect("/profile")
     else
-        @user = User.first(:username=>username)
-        puts @user.username
-        puts @user.password
-        puts username
-        puts password
-
-        @user.attributes = {:username => username,:password => password}
-        if @user.update
+        session[:user] = UserController.new
+        if session[:user].update(username,password)
             settings.error = true
-            settings.errorMessage = "Success: The username was updated!"
+            settings.errorMessage = "Success: The password was updated!"
             redirect("/profile#updated")
         else 
             settings.error = true
@@ -223,7 +218,7 @@ get '/events' do
 end
 
 get '/faq' do
-    erb :faq
+
 end
 
 get '/contact' do
