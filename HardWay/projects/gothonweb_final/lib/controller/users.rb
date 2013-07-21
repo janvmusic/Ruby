@@ -13,6 +13,11 @@ class UserController
 
     # User register
     def register(username,password)
+
+        if username == "" && password = "" || username == nil && password = nil
+            return false
+        end
+
         @user.attributes = {:username => username,:password => password}
         
         if @user.save
@@ -24,6 +29,11 @@ class UserController
 
     # User update password
     def update(username,password)
+
+        if username == "" && password = "" || username == nil && password = nil
+            return false
+        end
+
         @user = User.first(:username=>username)
         
         if @user == nil
@@ -37,14 +47,23 @@ class UserController
 
     # User update score
     def update(username,score)
+
+        if username == "" && score = "" || username == nil && score = nil
+            return false
+        end
+
         @user = User.first(:username=>username)
         
         if @user == nil
-            return false    
-        elsif @user.update(:username => username,:score => score)
-            return true
+            return false 
         else
-            return false
+            score += @user.score
+            
+            if @user.update(:username => username,:score => score)
+                return true
+            else
+                return false
+            end
         end
     end
 
@@ -61,6 +80,22 @@ class UserController
             return true
         else 
             return false
+        end
+    end
+
+    # Get user score
+    def getScore(username)
+
+        if username == "" || username == nil
+            return 0
+        end
+
+        @user = User.first(:username=>username)
+
+        if @user == nil
+            return 0
+        else 
+            return @user.score
         end
     end
 end

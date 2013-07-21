@@ -11,4 +11,7 @@ class PoliticsRoom < Room
         @previousRoom = ""
     end
 
+    def getStartRoom()
+        
+    end
 end

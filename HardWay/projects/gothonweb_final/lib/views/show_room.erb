@@ -7,14 +7,20 @@
                     <p align="justify"><em><%= room.description %></em></p>       
                     <p>
                         <!-- Game Over or Win -->
-                        <% if room.name == 'Game Over' || room.name == 'The End' %>     
+                        <% if room.name == 'Game Over' %>     
                             <p align="justify"> 
                                 <em> <%= room.message %> </em>
                                 <%= room.message = "" %> <!-- Important! Clean room message -->
                                 </br></br>
-                                <a href="/game"> Play again?</a>
+                                <a href="/game/<%=settings.game%>"> Play again?</a>
                             </p>
-
+                        <% elsif room.name == room.getEndRoom() %>
+                            <p align="justify"> 
+                                <em> <%= room.message %> </em>
+                                <%= room.message = "" %> <!-- Important! Clean room message -->
+                                </br></br>
+                                <a href="/"> Go Back</a>
+                            </p>
                         <% else %>
                             <!-- In the case that the room is Laser Weapon Armory we are gonna need to add a Hint -->
                             <% if room.name == 'Laser Weapon Armory' %>
@@ -31,7 +37,7 @@
                             <!-- TO-DO: validate null D:! -->
                             <% else %>
                                 <p>
-                                    <form action "/game" method="POST">
+                                    <form action "/game/<%=settings.game%>" method="POST">
                                         What are you gonna do? - <input type="text" name="action">
                                         <input type="SUBMIT">
                                     </form>

@@ -16,6 +16,9 @@ set :username, ''
 set :token, 'AirGear'
 set :error, false
 set :errorMessage, ''
+set :game,''
+set :score,''
+set :roomName,''
 
 # Helpers
 helpers do
@@ -34,18 +37,50 @@ helpers do
         redirect("/privateLogin") unless admin?
     end
 
-    # Erase the session
+    # Erase the user session
     def logout
         session[:user] = nil
+    end
+
+    # Erase the room session
+    def cleanRoom
+        session[:room] = nil
+    end
+
+    # Get updated user score
+    def userScore
+        settings.score = session[:user].getScore(settings.username)
+    end
+
+    # Get Room hint
+    def roomHint()
+        if session[:room] == nil
+            "No hint available"
+        else
+            return session[:room].getRoomHint(session[:room].name)
+        end
+        
     end
 end
 
 # TO-DO: Comments & prepare this thing for more rooms
-get '/game' do 
+get '/game/:name' do 
+    protected!
+    if session[:room] == nil 
+        if params[:name] == 'gothons'
+            p GOTHONSTART
+            settings.game = 'gothons'
+            session[:room] = GOTHONSTART
+        elsif params[:name] == 'politicsRage'
+            p POLITICSSTART
+            session[:room] = POLITICSSTART
+            settings.game = 'gothons'
+        end
+    end
 
     if session[:room]
         if session[:room].name == 'Game Over' && session[:room].message == ""
-            session[:room] = START
+            session[:room] = session[:room].getStartRoom()
             erb :show_room, :locals => {:room => session[:room]}
         else
             erb :show_room, :locals => {:room => session[:room]}
@@ -57,29 +92,30 @@ get '/game' do
 end
 
 # TO-DO: Comments & prepare this thing for more rooms
-post '/game' do
+post '/game/:name' do
     action = "#{params[:action] || nil}"
 
     # Let's save the previous room name
     previousRoom = session[:room].name
 
     # If the room is empty well, lets declare it as a death
-    if session[:room] == nil
-            session[:room] = session[:room].go('gameOver')
+    if session[:room] == nil        
+        session[:room] = session[:room].go('gameOver')
     elsif session[:room]
         session[:room] = session[:room].go(params[:action])
 
-        if session[:room] == nil
-            session[:room] = DEATH
+        if session[:room] == session[:room].getDeathRoom()
             # Set the previous room
             session[:room].previousRoom = previousRoom
-            session[:room].setMessage('gameOver')
+            session[:room].setMessage(action)
+        elsif session[:room].name == session[:room].getEndRoom()
+            @user = UserController.new
+            @user.update(settings.username,session[:room].score)
         else
             session[:room].setMessage(action)
         end 
     end
-
-    redirect("/game")
+    redirect("/game/#{params[:name]}")
 end
 
 # Post action when a user tries to log in
@@ -111,12 +147,8 @@ post '/login' do
         settings.username = session[:user].username
         settings.error = false
         settings.errorMessage = ""
-        p START
-        session[:room] = START
         redirect("/") 
     end
-
-
 end
 
 # Post action when a user tries to register
@@ -174,6 +206,7 @@ end
 
 # Simple gets
 get '/' do
+    cleanRoom
     erb :index
 end
 
@@ -206,19 +239,12 @@ get '/register#new' do
 end
 
 get '/profile' do
+    userScore
     erb :profile
 end
 
 get '/profile#updated' do
     erb :profile
-end
-
-get '/events' do
-    erb :events
-end
-
-get '/faq' do
-
 end
 
 get '/contact' do
