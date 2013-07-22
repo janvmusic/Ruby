@@ -71,10 +71,10 @@ get '/game/:name' do
             p GOTHONSTART
             settings.game = 'gothons'
             session[:room] = GOTHONSTART
-        elsif params[:name] == 'politicsRage'
+        elsif params[:name] == 'politics'
             p POLITICSSTART
+            settings.game = 'politics'
             session[:room] = POLITICSSTART
-            settings.game = 'gothons'
         end
     end
 

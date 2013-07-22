@@ -14,7 +14,6 @@ class GothonRoom < Room
 	end
 
 	def go(direction)
-		puts "MAZAPAN #{direction}"
 		if !@paths.include? direction
 			@paths['genericDeath']
 		else
@@ -39,7 +38,6 @@ class GothonRoom < Room
 
 	def getRoomHint(room)
 
-		puts "MAZAPAN #{room}"
 		if room == nil || room == ""
 			@hint = @@HINTS['wrongHint']
 		elsif @@HINTS.include? room
@@ -50,7 +48,6 @@ class GothonRoom < Room
 				@hint = @@HINTS[room]
 			end
 		else	
-			puts "GOT HERE"
 			@hint = @@HINTS['wrongHint']
 		end
 	end
