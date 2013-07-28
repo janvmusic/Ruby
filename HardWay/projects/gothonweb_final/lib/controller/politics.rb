@@ -3,6 +3,65 @@ require_relative "./room"
 class PoliticsRoom < Room
     attr_accessor :name, :description, :paths, :message, :previousRoom, :score, :hint
 
+door1 = 
+    %q{
+    You jump into door number 1 and found that both doors get you to the same place...
+    A room full a guards, they get you and take you to the jail. now you are waiting for
+    your time. El candigato Morris thanks your and they finally kill you.</br></br>
+
+    You were too close. Game Over.</br></br>
+    }
+
+door3 = 
+    %q{
+    You jump into door number 3, but inmediatly you got shoot by the guard who was chasing you
+    </br></br>
+    You were too close. Game Over.
+    }
+
+failEscape =
+    %q{
+    You tried to run away unfortunately you step into a hole and you death!</br></br>
+
+    Game Over!
+    }
+
+shootRoom =
+    %q{
+    You shoot 2 times, but you can't see anything, suddenly you got hit in the head.
+    Then you wake up in a room, tied up next to El Candigato. Unfortunatelly El candigato is dead</br></br>
+
+    Game Over
+    }
+
+fightThem = 
+    %q{
+    You run furiously to fight the guards, and like James Bond you hit them hard and fast, Knock them out.
+    Now you get the keys from one of the guards. Before leave the room, you check that you didn't forget anything
+    unfortunatelly you wake up a guard and quckly he shoots you.</br></br>
+
+    You slowly die. Game Over
+    }
+
+gameOver = 
+%q{
+    What was that? Probably that's wasn't a good idea, I mean you made that Guard
+    furious, be careful, He has a shotgun! *shoots sound* </br></br>
+
+    Oh My God! You are bleeding, you tried to scape but you are so weak that you
+    slowly die in the middle of the forest.
+}
+
+    @@MESSAGES = {
+        'run away' => failEscape,
+        'shoot him' => shootRoom,
+        'fight them' => fightThem,
+        'shoot them' => shootRoom,
+        '1' => door1,
+        '3' => door3,
+        'gameOver' => gameOver
+    }
+
     def initialize(name,description)
         @name = name
         @description = description
@@ -38,16 +97,11 @@ class PoliticsRoom < Room
     def getRoomHint(room)
 
         if room == nil || room == ""
-            @hint = @@HINTS['wrongHint']
-        elsif @@HINTS.include? room
-            if room == 'Laser Weapon Armory'
-                first,second,third,fourth = @@SECRETCODE.to_s.split('')
-                @hint += third 
-            else
-                @hint = @@HINTS[room]
-            end
+            @hint = @@POLITICSHINTS['wrongHint']
+        elsif @@POLITICSHINTS.include? room
+            @hint = @@POLITICSHINTS[room]
         else    
-            @hint = @@HINTS['wrongHint']
+            @hint = @@POLITICSHINTS['wrongHint']
         end
     end
 
@@ -184,15 +238,7 @@ gameOver =
     slowly die in the middle of the forest.
 }
 
-@@MESSAGES = {
-    'run away' => failEscape,
-    'shoot him' => shootRoom,
-    'fight them' => fightThem,
-    'shoot them' => shootRoom,
-    '1' => door1,
-    '3' => door3,
-    'gameOver' => gameOver
-}
+
 
 # Hints!
 morrisKidnappedHint = "Maybe you track him down!"
@@ -202,7 +248,7 @@ escapeTimeRoomHint = "You can hear noises from door 1"
 theEndHint = "You won! Congratulations!"
 wrongHint = "Woah! I won't give you a hint! You cheater!"
 
-@@HINTS = {
+@@POLITICSHINTS = {
     'Morris Kidnaped' => morrisKidnappedHint,
     'Secret Corridor' => secretCorridorHint,
     'Inside Room' => insideRoomHint,

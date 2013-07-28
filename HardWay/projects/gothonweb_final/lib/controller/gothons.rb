@@ -3,6 +3,7 @@ require_relative './room'
 class GothonRoom < Room
 	attr_accessor :name, :description, :paths, :message, :previousRoom, :score, :hint
 
+	# Constructor
 	def initialize(name,description)
 		@name = name
 		@description = description
@@ -11,18 +12,48 @@ class GothonRoom < Room
 		@previousRoom = ""
 		@startRoom = "centralCorridor"
 		@score = 75
+		@secretCode = ""
 	end
 
+	# Here add messages to the hash
+	@@MESSAGES = {
+		'shoot' => shoot,
+		'dodge' => dodge,
+		'throw the bomb' => throwBomb,
+		'hint' => hint,
+		'wrongCode' => wrongCode,
+		'bridgeDeath' => bridgeDeath,
+		'wrongPod' => wrongPod,
+		'gameOver' => gameOver
+	}
+
+	# Here add hints to the hash
+	@@HINTS = {
+		'Central Corridor' => centralCorridorHint,
+		'Laser Weapon Armory' => laserWeaponHint,
+		'The Bridge' => theBridgeHint,
+		'Escape Pod' => escapePodHint,
+		'The End' => theEndHint,
+		'wrongHint' => wrongHint
+	}
+
+	# Misc
 	def go(direction)
 		if !@paths.include? direction
-			@paths['genericDeath']
+			getDeathRoom()
 		else
 			@paths[direction]
 		end
 	end
 
+	def generateHint()
+		# Let's generate the secret code
+		@secretCode = "%s%s%s%s" % [rand(9)+1,rand(9)+1,rand(9)+1,rand(9)+1]
+	end
+
 	# Sets
 	def setMessage(action)
+
         # Room not nil and well it has a name! laser! bzzzz
         if @previousRoom == 'Laser Weapon Armory' && @name == 'Game Over'
             @message = @@MESSAGES['wrongCode']
@@ -36,13 +67,15 @@ class GothonRoom < Room
 		end 
 	end
 
+	# Gets
 	def getRoomHint(room)
 
 		if room == nil || room == ""
 			@hint = @@HINTS['wrongHint']
 		elsif @@HINTS.include? room
 			if room == 'Laser Weapon Armory'
-				first,second,third,fourth = @@SECRETCODE.to_s.split('')
+				first,second,third,fourth = @secretCode.to_s.split('')
+				@hint = @@HINTS[room]
 				@hint += third 
 			else
 				@hint = @@HINTS[room]
@@ -52,16 +85,9 @@ class GothonRoom < Room
 		end
 	end
 
-	def generateHint()
-		# Let's generate the secret code
-		secretCode = "%s%s%s%s" % [rand(9)+1,rand(9)+1,rand(9)+1,rand(9)+1]
-		@@SECRETCODE = secretCode
-		puts secretCode
-		return secretCode
-	end
-
 	def getHint()
-		first,second,third,fourth = generateHint().to_s.split('')
+		first,second,third,fourth = @secretCode.to_s.split('')
+		puts @secretCode
 		hint = first << "X" << "X" << fourth
 	end
 
@@ -255,29 +281,6 @@ escapePodHint = "Seems that the number 3 is broken! be careful"
 theEndHint = "You won! Congratulations!"
 wrongHint = "Woah! I won't give you a hint! You cheater!"
 
-@@SECRETCODE=0000
-
-# Here add messages to the arrays
-@@MESSAGES = {
-	'shoot' => shoot,
-	'dodge' => dodge,
-	'throw the bomb' => throwBomb,
-	'hint' => hint,
-	'wrongCode' => wrongCode,
-	'bridgeDeath' => bridgeDeath,
-	'wrongPod' => wrongPod,
-	'gameOver' => gameOver
-}
-
-@@HINTS = {
-	'Central Corridor' => centralCorridorHint,
-	'Laser Weapon Armory' => laserWeaponHint,
-	'The Bridge' => theBridgeHint,
-	'Escape Pod' => escapePodHint,
-	'The End' => theEndHint,
-	'wrongHint' => wrongHint
-}
-
 # Paths!
 centralCorridor.addPaths({
 	'tell a joke' => laserWeaponArmory,
@@ -287,10 +290,9 @@ centralCorridor.addPaths({
 	'genericDeath' => genericDeath
 })
 
-# Hint the user!
 laserWeaponArmory.addPaths({
-	@@SECRETCODE => theBridge,
-	'*' => genericDeath,
+	laserWeaponArmory.generateHint() => theBridge,
+	'*' => genericDeath
 })
 
 theBridge.addPaths({
@@ -304,6 +306,7 @@ escapePod.addPaths({
 	'*' => theEndLoser
 })
 
+# Begin and end
 GOTHONSTART = centralCorridor
 DEATH = genericDeath
 

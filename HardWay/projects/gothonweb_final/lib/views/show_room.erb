@@ -25,10 +25,9 @@
                             <!-- In the case that the room is Laser Weapon Armory we are gonna need to add a Hint -->
                             <% if room.name == 'Laser Weapon Armory' %>
                                 <p align="justify">
-                                    <em> <%= room.message %> </em>
                                     <em>Hint: <%= room.getHint() %> </em> <!-- Hint here! -->
                                 <p>
-                                <form action "/game" method="POST">
+                                <form action "/game/<%=settings.game%>" method="POST">
                                     [keypad]> <input type="text" name="action">
                                     <input type="SUBMIT">
                                 </form>
