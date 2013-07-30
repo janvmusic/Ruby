@@ -3,6 +3,81 @@ require_relative './room'
 class GothonRoom < Room
 	attr_accessor :name, :description, :paths, :message, :previousRoom, :score, :hint
 
+	# Hints!
+	@@centralCorridorHint = "Maybe you could say something funny!"
+	@@laserWeaponHint = "I'm gonna give you one more number: " 
+	@@theBridgeHint = " Don't move that bomb rapidly, be easy, it might explode in any second"
+	@@escapePodHint = "Seems that the number 3 is broken! be careful"
+	@@theEndHint = "You won! Congratulations!"
+	@@wrongHint = "Woah! I won't give you a hint! You cheater!"
+
+	# Messages
+	@@shoot = %q{
+		Quick on the draw you yank out your blaster and fire it at the Gothon.
+		His clown costume is flowing and moving around his body, which throws
+		off your aim. Your laser hits his costume but misses him entirely. This
+		completely ruins his brand new costume his mother bought him, which
+		makes him fly into an insane rage and blast you repeatedly in the face until
+		you are dead. Then he eats you.
+	}
+
+	@@dodge = %q{
+		Like a world class boxer you dodge, weave, slip and slide right
+		as the Gothon's blaster cranks a laser past your head.
+		In the middle of your artful dodge your foot slips and you
+		bang your head on the metal wall and pass out.</br></br>
+
+		You wake up shortly after only to die as the Gothon stomps on
+		your head and eats you.
+	}
+
+	@@throwBomb = %q{
+		In a panic you throw the bomb at the group of Gothons
+		and make a leap for the door. Right as you drop it a
+		Gothon shoots you right in the back killing you.
+		As you die you see another Gothon frantically try to disarm
+		the bomb. You die knowing they will probably blow up when
+		it goes off.
+	}
+
+	@@hint = %q{
+		Lucky you! the first and last digit of the codes are already 
+		in the display!
+	}
+
+	@@wrongCode = 
+	%q{
+		The lock buzzes one last time and then you hear the sickening
+		melting sound as the mechanism is fused together.
+		You decide to sit there, and finally the Gothons blow up the
+		ship from their ship and you die.
+	}
+
+	@@bridgeDeath = 
+	%q{
+		That's something you think is a good idea? Probably not
+		a Gothon found you and shoot you in the back. While you
+		exhale your last breathe you can see how all the ship is 
+		blown, finally you die in the bast space.
+	}
+
+	@@wrongPod = 
+	%{
+		You jump into pod %s and hit the eject button.
+		The pod escapes out into the void of space, then
+		implodes as the hull ruptures, crushing your body
+		into jam jelly.
+	}
+
+	@@gameOver = 
+	%q{
+		What was that? Probably that's wasn't a good idea, I mean you made that Gothon
+		furious, be careful, He has a shotgun! *shoots sound* </br></br>
+
+		The weapon that he used made you tiny, so now you are in a lab
+		locked in a jar. Probably that's worse than be dead.
+	}
+
 	# Constructor
 	def initialize(name,description)
 		@name = name
@@ -14,28 +89,6 @@ class GothonRoom < Room
 		@score = 75
 		@secretCode = ""
 	end
-
-	# Here add messages to the hash
-	@@MESSAGES = {
-		'shoot' => shoot,
-		'dodge' => dodge,
-		'throw the bomb' => throwBomb,
-		'hint' => hint,
-		'wrongCode' => wrongCode,
-		'bridgeDeath' => bridgeDeath,
-		'wrongPod' => wrongPod,
-		'gameOver' => gameOver
-	}
-
-	# Here add hints to the hash
-	@@HINTS = {
-		'Central Corridor' => centralCorridorHint,
-		'Laser Weapon Armory' => laserWeaponHint,
-		'The Bridge' => theBridgeHint,
-		'Escape Pod' => escapePodHint,
-		'The End' => theEndHint,
-		'wrongHint' => wrongHint
-	}
 
 	# Misc
 	def go(direction)
@@ -54,34 +107,56 @@ class GothonRoom < Room
 	# Sets
 	def setMessage(action)
 
+		# Here add messages to the hash
+		gothonsMessages = {
+			'shoot' => @@shoot,
+			'dodge' => @@dodge,
+			'throw the bomb' => @@throwBomb,
+			'hint' => @@hint,
+			'wrongCode' => @@wrongCode,
+			'bridgeDeath' => @@bridgeDeath,
+			'wrongPod' => @@wrongPod,
+			'gameOver' => @@gameOver
+		}
+
         # Room not nil and well it has a name! laser! bzzzz
         if @previousRoom == 'Laser Weapon Armory' && @name == 'Game Over'
-            @message = @@MESSAGES['wrongCode']
+            @message = gothonsMessages['wrongCode']
         # Get the Wrong Pod message
         elsif @previousRoom == 'Escape Pod' && @name == 'Game Over'
-            @message = @@MESSAGES['wrongPod']
-        elsif @@MESSAGES.include? action
-			@message = @@MESSAGES[action]
+            @message = gothonsMessages['wrongPod']
+        elsif gothonsMessages.include? action
+			@message = gothonsMessages[action]
 		else
-			@message = @@MESSAGES['gameOver']
+			@message = gothonsMessages['gameOver']
 		end 
 	end
 
 	# Gets
 	def getRoomHint(room)
 
+		# Here add hints to the hash
+		gothonsHints = {
+			'Central Corridor' => @@centralCorridorHint,
+			'Laser Weapon Armory' => @@laserWeaponHint,
+			'The Bridge' => @@theBridgeHint,
+			'Escape Pod' => @@escapePodHint,
+			'The End' => @@theEndHint,
+			'wrongHint' => @@wrongHint
+		}
+
 		if room == nil || room == ""
-			@hint = @@HINTS['wrongHint']
-		elsif @@HINTS.include? room
+			@hint = gothonsHints['wrongHint']
+		elsif gothonsHints.include? room
 			if room == 'Laser Weapon Armory'
 				first,second,third,fourth = @secretCode.to_s.split('')
-				@hint = @@HINTS[room]
+				@hint = gothonsHints[room]
 				@hint += third 
 			else
-				@hint = @@HINTS[room]
+				@hint = gothonsHints[room]
 			end
 		else	
-			@hint = @@HINTS['wrongHint']
+			@hint = gothonsHints['wrongHint']
 		end
 	end
 
@@ -206,81 +281,6 @@ theEndLoser = GothonRoom.new("Wrong Pod",
 
 genericDeath = GothonRoom.new("Game Over","You died")
 
-# Messages
-shoot = %q{
-	Quick on the draw you yank out your blaster and fire it at the Gothon.
-	His clown costume is flowing and moving around his body, which throws
-	off your aim. Your laser hits his costume but misses him entirely. This
-	completely ruins his brand new costume his mother bought him, which
-	makes him fly into an insane rage and blast you repeatedly in the face until
-	you are dead. Then he eats you.
-}
-
-dodge = %q{
-	Like a world class boxer you dodge, weave, slip and slide right
-	as the Gothon's blaster cranks a laser past your head.
-	In the middle of your artful dodge your foot slips and you
-	bang your head on the metal wall and pass out.</br></br>
-
-	You wake up shortly after only to die as the Gothon stomps on
-	your head and eats you.
-}
-
-throwBomb = %q{
-	In a panic you throw the bomb at the group of Gothons
-	and make a leap for the door. Right as you drop it a
-	Gothon shoots you right in the back killing you.
-	As you die you see another Gothon frantically try to disarm
-	the bomb. You die knowing they will probably blow up when
-	it goes off.
-}
-
-hint = %q{
-	Lucky you! the first and last digit of the codes are already 
-	in the display!
-}
-
-wrongCode = 
-%q{
-	The lock buzzes one last time and then you hear the sickening
-	melting sound as the mechanism is fused together.
-	You decide to sit there, and finally the Gothons blow up the
-	ship from their ship and you die.
-}
-
-bridgeDeath = 
-%q{
-	That's something you think is a good idea? Probably not
-	a Gothon found you and shoot you in the back. While you
-	exhale your last breathe you can see how all the ship is 
-	blown, finally you die in the bast space.
-}
-
-wrongPod = 
-%{
-	You jump into pod %s and hit the eject button.
-	The pod escapes out into the void of space, then
-	implodes as the hull ruptures, crushing your body
-	into jam jelly.
-}
-
-gameOver = 
-%q{
-	What was that? Probably that's wasn't a good idea, I mean you made that Gothon
-	furious, be careful, He has a shotgun! *shoots sound* </br></br>
-
-	The weapon that he used made you tiny, so now you are in a lab
-	locked in a jar. Probably that's worse than be dead.
-}
-
-# Hints!
-centralCorridorHint = "Maybe you could say something funny!"
-laserWeaponHint = "I'm gonna give you one more number: " 
-theBridgeHint = " Don't move that bomb rapidly, be easy, it might explode in any second"
-escapePodHint = "Seems that the number 3 is broken! be careful"
-theEndHint = "You won! Congratulations!"
-wrongHint = "Woah! I won't give you a hint! You cheater!"
-
 # Paths!
 centralCorridor.addPaths({
 	'tell a joke' => laserWeaponArmory,
@@ -309,4 +309,3 @@ escapePod.addPaths({
 # Begin and end
 GOTHONSTART = centralCorridor
 DEATH = genericDeath
-

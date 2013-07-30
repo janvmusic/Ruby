@@ -18,6 +18,7 @@ class UserController
             return false
         end
 
+        @user = User.new
         @user.attributes = {:username => username,:password => password}
         
         if @user.save
@@ -28,7 +29,7 @@ class UserController
     end
 
     # User update password
-    def update(username,password)
+    def updatePassword(username,password)
 
         if username == "" && password = "" || username == nil && password = nil
             return false

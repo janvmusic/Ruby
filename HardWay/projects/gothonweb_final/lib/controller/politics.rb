@@ -3,65 +3,65 @@ require_relative "./room"
 class PoliticsRoom < Room
     attr_accessor :name, :description, :paths, :message, :previousRoom, :score, :hint
 
-door1 = 
+    # Messages 
+    @@door1 = 
+        %q{
+        You jump into door number 1 and found that both doors get you to the same place...
+        A room full a guards, they get you and take you to the jail. now you are waiting for
+        your time. El candigato Morris thanks your and they finally kill you.</br></br>
+
+        You were too close. Game Over.</br></br>
+        }
+
+    @@door3 = 
+        %q{
+        You jump into door number 3, but inmediatly you got shoot by the guard who was chasing you
+        </br></br>
+        You were too close. Game Over.
+        }
+
+    @@failEscape =
+        %q{
+        You tried to run away unfortunately you step into a hole and you death!</br></br>
+
+        Game Over!
+        }
+
+    @@shootRoom =
+        %q{
+        You shoot 2 times, but you can't see anything, suddenly you got hit in the head.
+        Then you wake up in a room, tied up next to El Candigato. Unfortunatelly El candigato is dead</br></br>
+
+        Game Over
+        }
+
+    @@fightThem = 
+        %q{
+        You run furiously to fight the guards, and like James Bond you hit them hard and fast, Knock them out.
+        Now you get the keys from one of the guards. Before leave the room, you check that you didn't forget anything
+        unfortunatelly you wake up a guard and quckly he shoots you.</br></br>
+
+        You slowly die. Game Over
+        }
+
+    @@gameOver = 
     %q{
-    You jump into door number 1 and found that both doors get you to the same place...
-    A room full a guards, they get you and take you to the jail. now you are waiting for
-    your time. El candigato Morris thanks your and they finally kill you.</br></br>
+        What was that? Probably that's wasn't a good idea, I mean you made that Guard
+        furious, be careful, He has a shotgun! *shoots sound* </br></br>
 
-    You were too close. Game Over.</br></br>
+        Oh My God! You are bleeding, you tried to scape but you are so weak that you
+        slowly die in the middle of the forest.
     }
 
-door3 = 
-    %q{
-    You jump into door number 3, but inmediatly you got shoot by the guard who was chasing you
-    </br></br>
-    You were too close. Game Over.
-    }
+    # Hints!
+    @@morrisKidnappedHint = "Maybe you track him down!"
+    @@secretCorridorHint = "If You know spanish, You could say Dispositivo de Viento" 
+    @@insideRoomHint = "Oh its a nap time!, The guards seem tired"
+    @@escapeTimeRoomHint = "You can hear noises from door 1"
+    @@theEndHint = "You won! Congratulations!"
+    @@wrongHint = "Woah! I won't give you a hint! You cheater!"
 
-failEscape =
-    %q{
-    You tried to run away unfortunately you step into a hole and you death!</br></br>
-
-    Game Over!
-    }
-
-shootRoom =
-    %q{
-    You shoot 2 times, but you can't see anything, suddenly you got hit in the head.
-    Then you wake up in a room, tied up next to El Candigato. Unfortunatelly El candigato is dead</br></br>
-
-    Game Over
-    }
-
-fightThem = 
-    %q{
-    You run furiously to fight the guards, and like James Bond you hit them hard and fast, Knock them out.
-    Now you get the keys from one of the guards. Before leave the room, you check that you didn't forget anything
-    unfortunatelly you wake up a guard and quckly he shoots you.</br></br>
-
-    You slowly die. Game Over
-    }
-
-gameOver = 
-%q{
-    What was that? Probably that's wasn't a good idea, I mean you made that Guard
-    furious, be careful, He has a shotgun! *shoots sound* </br></br>
-
-    Oh My God! You are bleeding, you tried to scape but you are so weak that you
-    slowly die in the middle of the forest.
-}
-
-    @@MESSAGES = {
-        'run away' => failEscape,
-        'shoot him' => shootRoom,
-        'fight them' => fightThem,
-        'shoot them' => shootRoom,
-        '1' => door1,
-        '3' => door3,
-        'gameOver' => gameOver
-    }
-
+    # Constructor
     def initialize(name,description)
         @name = name
         @description = description
@@ -72,6 +72,8 @@ gameOver =
         @score = 50
     end
 
+
+    # Misc
     def go(direction)
 
         if !@paths.include? direction
@@ -83,25 +85,43 @@ gameOver =
 
     # Sets
     def setMessage(action)
-
+        politicsMessages = {
+            'run away' => @@failEscape,
+            'shoot him' => @@shootRoom,
+            'fight them' => @@fightThem,
+            'shoot them' => @@shootRoom,
+            '1' => @@door1,
+            '3' => @@door3,
+            'gameOver' => @@gameOver
+        }
         if action == "" || nil 
-            @message = @@MESSAGES['gameOver']
-        elsif !@@MESSAGES.include?action
-            @message = @@MESSAGES['gameOver']
+            @message = politicsMessages['gameOver']
+        elsif !politicsMessages.include?action
+            @message = politicsMessages['gameOver']
         else
-            @message = @@MESSAGES[action]
+            @message = politicsMessages[action]
         end
             
     end
 
+    # Gets
     def getRoomHint(room)
 
+        hintsMap = {
+            'Morris Kidnaped' => @@morrisKidnappedHint,
+            'Secret Corridor' => @@secretCorridorHint,
+            'Inside Room' => @@insideRoomHint,
+            'Escape Time' => @@escapeTimeRoomHint,
+            'The End' => @@theEndHint,
+            'wrongHint' => @@wrongHint
+        }
+
         if room == nil || room == ""
-            @hint = @@POLITICSHINTS['wrongHint']
-        elsif @@POLITICSHINTS.include? room
-            @hint = @@POLITICSHINTS[room]
+            @hint = hintsMap['wrongHint']
+        elsif hintsMap.include? room
+            @hint = hintsMap[room]
         else    
-            @hint = @@POLITICSHINTS['wrongHint']
+            @hint = hintsMap['wrongHint']
         end
     end
 
@@ -122,7 +142,7 @@ end
 # Rooms!
 morrisKidnapped = PoliticsRoom.new("Morris Kidnaped",
     %q{
-    Candigato Morris was kidnapped!No mater what, You have to find
+    Candigato Morris was kidnapped! No mater what, You have to find
     him! Go to this address and find any hint that We could use to
     track this cat. Remember we don't know who we are fighting. 
     Be careful</br></br>
@@ -187,75 +207,6 @@ theEndWinner = PoliticsRoom.new("The End",
 )
 
 genericDeath = PoliticsRoom.new("Game Over","You died")
-
-# Messages
-door1 = 
-    %q{
-    You jump into door number 1 and found that both doors get you to the same place...
-    A room full a guards, they get you and take you to the jail. now you are waiting for
-    your time. El candigato Morris thanks your and they finally kill you.</br></br>
-
-    You were too close. Game Over.</br></br>
-    }
-
-door3 = 
-    %q{
-    You jump into door number 3, but inmediatly you got shoot by the guard who was chasing you
-    </br></br>
-    You were too close. Game Over.
-    }
-
-failEscape =
-    %q{
-    You tried to run away unfortunately you step into a hole and you death!</br></br>
-
-    Game Over!
-    }
-
-shootRoom =
-    %q{
-    You shoot 2 times, but you can't see anything, suddenly you got hit in the head.
-    Then you wake up in a room, tied up next to El Candigato. Unfortunatelly El candigato is dead</br></br>
-
-    Game Over
-    }
-
-fightThem = 
-    %q{
-    You run furiously to fight the guards, and like James Bond you hit them hard and fast, Knock them out.
-    Now you get the keys from one of the guards. Before leave the room, you check that you didn't forget anything
-    unfortunatelly you wake up a guard and quckly he shoots you.</br></br>
-
-    You slowly die. Game Over
-    }
-
-gameOver = 
-%q{
-    What was that? Probably that's wasn't a good idea, I mean you made that Guard
-    furious, be careful, He has a shotgun! *shoots sound* </br></br>
-
-    Oh My God! You are bleeding, you tried to scape but you are so weak that you
-    slowly die in the middle of the forest.
-}
-
-
-
-# Hints!
-morrisKidnappedHint = "Maybe you track him down!"
-secretCorridorHint = "If You know spanish, You could say Dispositivo de Viento" 
-insideRoomHint = "Oh its a nap time!, The guards seem tired"
-escapeTimeRoomHint = "You can hear noises from door 1"
-theEndHint = "You won! Congratulations!"
-wrongHint = "Woah! I won't give you a hint! You cheater!"
-
-@@POLITICSHINTS = {
-    'Morris Kidnaped' => morrisKidnappedHint,
-    'Secret Corridor' => secretCorridorHint,
-    'Inside Room' => insideRoomHint,
-    'Escape Time' => escapeTimeRoomHint,
-    'The End' => theEndHint,
-    'wrongHint' => wrongHint
-}
 
 # Paths!
 morrisKidnapped.addPaths({

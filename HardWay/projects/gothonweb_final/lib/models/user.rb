@@ -4,7 +4,7 @@ require 'dm-postgres-adapter'
 require 'dm-validations'
 require 'bcrypt'
 
-DataMapper.setup(:default,"postgres://localhost/nc_game")
+DataMapper.setup(:default,"postgres://jnunez2:test@localhost/nc_game")
 
 class User
     include DataMapper::Resource

@@ -166,7 +166,7 @@ post '/register' do
         redirect("/register")
     else
         session[:user] = UserController.new
-        if session[:user].register
+        if session[:user].register(username,password)
             settings.error = true
             settings.errorMessage = "Success: The username was created!"
             redirect("/register#new")
@@ -192,7 +192,7 @@ post '/profile' do
         redirect("/profile")
     else
         session[:user] = UserController.new
-        if session[:user].update(username,password)
+        if session[:user].updatePassword(username,password)
             settings.error = true
             settings.errorMessage = "Success: The password was updated!"
             redirect("/profile#updated")
@@ -239,6 +239,7 @@ get '/register#new' do
 end
 
 get '/profile' do
+    protected!
     userScore
     erb :profile
 end
@@ -248,6 +249,7 @@ get '/profile#updated' do
 end
 
 get '/contact' do
+    cleanRoom
     erb :contact
 end
 
